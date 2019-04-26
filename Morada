@@ -1,38 +1,28 @@
 #pragma once
 #include <string>
-#include "Morada.h"
 
 using namespace std;
 
-class Client {
+class Morada {
 public:
-	Client();
-	Client(string nome, string nif, string agregfamiliar, string rua, string porta, string andar,string cpostal, string localidade, string pacotadquiridos);
-	void setNome(string nome);
-	void setNif(string nif);
-	void setAgregFamiliar(string agregfamiliar);
-	void setMoradaRua(string rua);
-	void setMoradaPorta(string porta);
-	void setMoradaAndar(string andar);
-	void setMoradaCPostal(string cpostal);
-	void setMoradaLocalidade(string localidade);
-	void setPacotAdquiridos(string pacotadquiridos);
-	string getNome() const;
-	string getNif() const;
-	string getAgregFamiliar() const;
-	string getMoradaRua() const;
-	string getMoradaPorta() const;
-	string getMoradaAndar() const;
-	string getMoradaCPostal() const;
-	string getMoradaLocalidade() const;
-	string getMoradaMorada() const;
-	string getPacotAdquiridos() const;
-	string getClient() const;
-	void showClient() const;
+	Morada();
+	Morada(string rua, string porta,string andar,string cpostal, string localidade);
+	void setRua(string rua);
+	void setPorta(string porta);
+	void setAndar(string andar);
+	void setCPostal(string cpostal);
+	void setLocalidade(string localidade);
+	string getRua() const;
+	string getPorta() const;
+	string getAndar() const;
+	string getCPostal() const;
+	string getLocalidade() const;
+	string getMorada() const;
+	void showMorada() const;
 private:
-	string nome;
-	string nif;
-	string agregfamiliar;
-	Morada morada;
-	string pacotadquiridos;
+	string rua;
+	string porta;
+	string andar;
+	string cpostal;
+	string localidade;
 };
