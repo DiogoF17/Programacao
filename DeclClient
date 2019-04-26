@@ -1,0 +1,104 @@
+#include <iostream>
+#include <string>
+#include "Client.h"
+#include "Morada.h"
+
+using namespace std;
+
+Client::Client() {
+
+}
+
+Client::Client(string nome, string nif, string agregfamiliar, string rua, string porta, string andar,string cpostal, string localidade, string pacotadquiridos) {
+	this->nome = nome;
+	this->nif = nif;
+	morada = Morada(rua, porta, andar, cpostal, localidade);
+	this->pacotadquiridos = pacotadquiridos;
+}
+
+void Client::setNome(string nome) {
+	this->nome = nome;
+}
+
+void Client::setNif(string nif) {
+	this->nif = nif;
+}
+
+void Client::setAgregFamiliar(string agregfamiliar) {
+	this->agregfamiliar = agregfamiliar;
+}
+
+void Client::setMoradaRua(string rua) {
+	morada.setRua(rua);
+}
+
+void Client::setMoradaPorta(string porta) {
+	morada.setPorta(porta);
+}
+
+void Client::setMoradaAndar(string andar) {
+	morada.setAndar(andar);
+}
+
+void Client::setMoradaCPostal(string cpostal) {
+	morada.setCPostal(cpostal);
+}
+
+void Client::setMoradaLocalidade(string localidade) {
+	morada.setLocalidade(localidade);
+}
+
+void Client::setPacotAdquiridos(string pacotadquiridos) {
+	this->pacotadquiridos = pacotadquiridos;
+}
+
+string Client::getNome() const {
+	return nome;
+}
+
+string Client::getNif() const {
+	return nif;
+}
+
+string Client::getAgregFamiliar() const {
+	return agregfamiliar;
+}
+
+string Client::getMoradaRua() const {
+	return morada.getRua();
+}
+
+string Client::getMoradaPorta() const {
+	return morada.getPorta();
+}
+
+string Client::getMoradaAndar() const {
+	return morada.getAndar();
+}
+
+string Client::getMoradaCPostal() const {
+	return morada.getCPostal();
+}
+
+string Client::getMoradaLocalidade() const {
+	return morada.getLocalidade();
+}
+
+string Client::getMoradaMorada() const {
+	return morada.getMorada();
+}
+
+string Client::getPacotAdquiridos() const {
+	return pacotadquiridos;
+}
+
+string Client::getClient() const {
+	return "Nome.............: " + nome + "\nNif...............: " + nif + "\nMorada............: " + morada.getMorada() + "\nPacotes Adquiridos: " + pacotadquiridos;
+}
+
+void Client::showClient() const {
+	cout << "Nome.............: " << nome
+		<< "Nif...............: " << nif
+		<< "Morada............: " << morada.getMorada()
+		<< "Pacotes Adquiridos: " << pacotadquiridos;
+}
