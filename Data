@@ -1,0 +1,22 @@
+#pragma once
+#include <string>
+
+using namespace std;
+
+class Data {
+public:
+	Data();
+	Data(string d, string m, string a);
+	void setDia(string d);
+	void setMes(string m);
+	void setAno(string a);
+	void setData(string d, string m, string a);
+	string getDia() const;
+	string getMes() const;
+	string getAno() const;
+	void showData() const;
+private:
+	string dia;
+	string mes;
+	string ano;
+};
