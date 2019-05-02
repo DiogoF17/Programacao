@@ -9,11 +9,12 @@ Client::Client() {
 
 }
 
-Client::Client(string nome, string nif, string agregfamiliar, string rua, string porta, string andar,string cpostal, string localidade, string pacotadquiridos) {
+Client::Client(string nome, string nif, string agregfamiliar, string rua, string porta, string andar, string cpostal, string localidade, string pacotadquiridos, string capgasto) {
 	this->nome = nome;
 	this->nif = nif;
 	morada = Morada(rua, porta, andar, cpostal, localidade);
 	this->pacotadquiridos = pacotadquiridos;
+	this->capgasto = capgasto;
 }
 
 void Client::setNome(string nome) {
@@ -50,6 +51,10 @@ void Client::setMoradaLocalidade(string localidade) {
 
 void Client::setPacotAdquiridos(string pacotadquiridos) {
 	this->pacotadquiridos = pacotadquiridos;
+}
+
+void Client::setCapGasto(string capgasto) {
+	this->capgasto = capgasto;
 }
 
 string Client::getNome() const {
@@ -92,13 +97,19 @@ string Client::getPacotAdquiridos() const {
 	return pacotadquiridos;
 }
 
+string Client::getCapGasto() const {
+	return capgasto;
+}
+
 string Client::getClient() const {
-	return "Nome.............: " + nome + "\nNif...............: " + nif + "\nMorada............: " + morada.getMorada() + "\nPacotes Adquiridos: " + pacotadquiridos;
+	return "NOME.............: " + nome + "\nNIF...............: " + nif + "\nMORADA............: " + morada.getMorada() + "\nPACOTES ADQUIRIDOS: " + pacotadquiridos + "\nCAPITAL GASTO.....: " + capgasto;
 }
 
 void Client::showClient() const {
-	cout << "Nome.............: " << nome
-		<< "Nif...............: " << nif
-		<< "Morada............: " << morada.getMorada()
-		<< "Pacotes Adquiridos: " << pacotadquiridos;
+	cout << "NOME.............: " << nome << endl
+		<< "NIF...............: " << nif << endl
+		<< "MORADA............: " << morada.getMorada() << endl
+		<< "PACOTES ADQUIRIDOS: " << pacotadquiridos << endl
+		<< "CAPITAL GASTO.....: " << capgasto << endl;
+
 }
