@@ -1,0 +1,45 @@
+#pragma once
+#include <string>
+#include "Data.h"
+
+using namespace std;
+
+class Pacotes {
+public:
+	Pacotes();
+	Pacotes(string id, string destino, string diaInicio, string mesInicio, string anoInicio, string diaFim, string mesFim, string anoFim, string preco, string lugares, string lugaresV);
+	void setId(string id);
+	void setDestino(string destino);
+	void setDiaInicio(string diaInicio);
+	void setMesInicio(string mesInicio);
+	void setAnoInicio(string anoInicio);
+	void setDataInicio(string diaInicio, string mesInicio, string anoInicio);
+	void setDiaFim(string diaFim);
+	void setMesFim(string mesFim);
+	void setAnoFim(string anoFim);
+	void setDataFim(string diaFim, string mesFim, string anoFim);
+	void setPreco(string preco);
+	void setLugares(string lugares);
+	void setLugaresV(string lugaresV);
+	string getId();
+	string getDestino();
+	string getDiaInicio();
+	string getMesInicio();
+	string getAnoInicio();
+	string getDiaFim();
+	string getMesFim();
+	string getAnoFim();
+	string getPreco();
+	string getLugares();
+	string getLugaresV();
+	void showPacote();
+
+private:
+	string id;
+	string destino;
+	Data dataInicio;
+	Data dataFim;
+	string preco;
+	string lugares;
+	string lugaresV;
+};
