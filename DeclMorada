@@ -1,0 +1,65 @@
+#include <iostream>
+#include <string>
+#include "Morada.h"
+
+using namespace std;
+
+Morada::Morada()
+{
+}
+
+Morada::Morada(string rua, string porta, string andar, string cpostal, string localidade) {
+	this->rua = rua;
+	this->porta = porta;
+	this->andar = andar;
+	this->cpostal = cpostal;
+	this->localidade = localidade;
+}
+
+void Morada::setRua(string rua) {
+	this->rua = rua;
+}
+
+void Morada::setPorta(string porta) {
+	this->porta = porta;
+}
+
+void Morada::setAndar(string andar) {
+	this->andar = andar;
+}
+
+void Morada::setCPostal(string cpostal) {
+	this->cpostal = cpostal;
+}
+
+void Morada::setLocalidade(string localidade) {
+	this->localidade = localidade;
+}
+
+string Morada::getRua() const {
+	return rua;
+}
+
+string Morada::getPorta() const {
+	return porta;
+}
+
+string Morada::getAndar() const {
+	return andar;
+}
+
+string Morada::getCPostal() const {
+	return cpostal;
+}
+
+string Morada::getLocalidade() const {
+	return localidade;
+}
+
+string Morada::getMorada() const {
+	return  rua + " / " + porta + " / " + andar + " / " + cpostal + " / " + localidade;
+}
+
+void Morada::showMorada() const {
+	cout << rua << " / " << porta << " / " << andar << " / " << cpostal << " / " << localidade;
+}
