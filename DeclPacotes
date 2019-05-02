@@ -1,0 +1,157 @@
+#include <iostream>
+#include "Pacotes.h"
+
+using namespace std;
+
+Pacotes::Pacotes()
+{
+	id = "id desconhecido";
+	destino = "destino desconhecido";
+	dataInicio = Data();
+	dataFim = Data();
+	preco = "preco desconhecido";
+	lugares = "lotacao desconhecida";
+	lugaresV = "lugares disponiveis desconhecidos";
+}
+
+Pacotes::Pacotes(string id, string destino, string diaInicio, string mesInicio, string anoInicio, string diaFim, string mesFim, string anoFim, string preco, string lugares, string lugaresV)
+{
+	this->id = id;
+	this->destino = destino;
+	dataInicio = Data(diaInicio, mesInicio, anoInicio);
+	dataFim = Data(diaFim, mesFim, anoFim);
+	this->preco = preco;
+	this->lugares = lugares;
+	this->lugaresV = lugaresV;
+}
+
+void Pacotes::setId(string id)
+{
+	this->id = id;
+}
+
+void Pacotes::setDestino(string destino)
+{
+	this->destino = destino;
+}
+
+void Pacotes::setDiaInicio(string diaInicio)
+{
+	dataInicio.setDia(diaInicio);
+}
+
+void Pacotes::setMesInicio(string mesInicio)
+{
+	dataInicio.setMes(mesInicio);
+}
+
+void Pacotes::setAnoInicio(string anoInicio)
+{
+	dataInicio.setAno(anoInicio);
+}
+
+void Pacotes::setDataInicio(string diaInicio, string mesInicio, string anoInicio)
+{
+	dataInicio.setData(diaInicio, mesInicio, anoInicio);
+}
+
+void Pacotes::setDiaFim(string diaFim)
+{
+	dataFim.setDia(diaFim);
+}
+
+void Pacotes::setMesFim(string mesFim)
+{
+	dataFim.setMes(mesFim);
+}
+
+void Pacotes::setAnoFim(string anoFim)
+{
+	dataFim.setAno(anoFim);
+}
+
+void Pacotes::setDataFim(string diaFim, string mesFim, string anoFim)
+{
+	dataFim.setData(diaFim, mesFim, anoFim);
+}
+
+void Pacotes::setPreco(string preco)
+{
+	this->preco = preco;
+}
+
+void Pacotes::setLugares(string lugares)
+{
+	this->lugares = lugares;
+}
+
+void Pacotes::setLugaresV(string lugaresV)
+{
+	this->lugaresV = lugaresV;
+}
+
+string Pacotes::getId()
+{
+	return id;
+}
+
+string Pacotes::getDestino()
+{
+	return destino;
+}
+
+string Pacotes::getDiaInicio()
+{
+	return dataInicio.getDia();
+}
+
+string Pacotes::getMesInicio()
+{
+	return dataInicio.getMes();
+}
+
+string Pacotes::getAnoInicio()
+{
+	return dataInicio.getAno();
+}
+
+string Pacotes::getDiaFim()
+{
+	return dataFim.getDia();
+}
+
+string Pacotes::getMesFim()
+{
+	return dataFim.getMes();
+}
+
+string Pacotes::getAnoFim()
+{
+	return dataFim.getAno();
+}
+
+string Pacotes::getPreco()
+{
+	return preco;
+}
+
+string Pacotes::getLugares()
+{
+	return lugares;
+}
+
+string Pacotes::getLugaresV()
+{
+	return lugaresV;
+}
+
+void Pacotes::showPacote()
+{
+	cout << "IDENTIFICADOR NUMERICO: " << id << '\n'
+		<< "DESTINO...............: " << destino << '\n'
+		<< "DATA DE INICIO........: " << dataInicio.getDia() << '/' << dataInicio.getMes() << '/' << dataInicio.getAno() << '\n'
+		<< "DATA DE FIM...........: " << dataFim.getDia() << '/' << dataFim.getMes() << '/' << dataFim.getAno() << '\n'
+		<< "PRECO(P. PESSOA)......: " << preco << '\n'
+		<< "LUGARES...............: " << lugares << '\n'
+		<< "LUGARES VENDIDOS......: " << lugaresV << endl;
+}
