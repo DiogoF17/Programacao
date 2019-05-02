@@ -7,7 +7,7 @@ using namespace std;
 class Client {
 public:
 	Client();
-	Client(string nome, string nif, string agregfamiliar, string rua, string porta, string andar,string cpostal, string localidade, string pacotadquiridos);
+	Client(string nome, string nif, string agregfamiliar, string rua, string porta, string andar, string cpostal, string localidade, string pacotadquiridos, string capgasto);
 	void setNome(string nome);
 	void setNif(string nif);
 	void setAgregFamiliar(string agregfamiliar);
@@ -17,6 +17,7 @@ public:
 	void setMoradaCPostal(string cpostal);
 	void setMoradaLocalidade(string localidade);
 	void setPacotAdquiridos(string pacotadquiridos);
+	void setCapGasto(string capgasto);
 	string getNome() const;
 	string getNif() const;
 	string getAgregFamiliar() const;
@@ -27,6 +28,7 @@ public:
 	string getMoradaLocalidade() const;
 	string getMoradaMorada() const;
 	string getPacotAdquiridos() const;
+	string getCapGasto() const;
 	string getClient() const;
 	void showClient() const;
 private:
@@ -35,4 +37,5 @@ private:
 	string agregfamiliar;
 	Morada morada;
 	string pacotadquiridos;
+	string capgasto;
 };
