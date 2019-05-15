@@ -1,0 +1,3207 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <ctype.h>
+#include <stdlib.h>
+#include <iomanip>
+#include <sstream>
+#include <algorithm>
+#include "Morada.h"
+#include "Client.h"
+#include "Agency.h"
+#include "Pacotes.h"
+#include "Data.h"
+
+
+using namespace std;
+
+struct Destino
+{
+	int Visitas;
+	string Local;
+	vector<int> index;
+};
+
+string nomeclifi;
+
+string nomepacfi;
+
+string impi;
+
+vector <Client> paraclienteaux;
+
+vector <Pacotes> parapacotesaux;
+
+void atucli(vector <Client>, string);
+
+void atupac(vector <Pacotes>, string, string);
+
+void menu(vector <Client>&, vector <Pacotes>&, string&);
+
+void estatisticasmenu(vector <Client>, vector <Pacotes>, string);
+
+void pacotemenu(vector <Client>&, vector <Pacotes>&, string&);
+
+void clientemenu(vector <Client>&, vector <Pacotes>, string);
+
+void vendinf(vector <Client>, vector <Pacotes>, string);
+
+void pacotdisp(vector <Client>, vector <Pacotes>, string);
+
+//-------------------------AUXILIAR----------------------------------
+
+//ve se o vetor incial dos pacotes e igual ao final e se o utlimo pacote a ser ceiado e igual no inicio e no fim
+//@param1 vetor com informacao dos pacotes
+//@param2 vetor com informacao dos pacotes
+//@param3 ultimo pacote a ser criado
+//@param4 ultimo pacote a ser criado
+bool vetigupac(vector<Pacotes> vet1, vector <Pacotes> vet2, string impi, string impf) {
+	if (vet1.size() != vet2.size())
+		return false;
+	if (impi != impf)
+		return false;
+	for (int i = 0; i < vet1.size(); i++) {
+		if (vet1[i].getId() != vet2[i].getId())
+			return false;
+		if (vet1[i].getDestino() != vet2[i].getDestino())
+			return false;
+		if (vet1[i].getDiaInicio() != vet2[i].getDiaInicio())
+			return false;
+		if (vet1[i].getMesInicio() != vet2[i].getMesInicio())
+			return false;
+		if (vet1[i].getAnoInicio() != vet2[i].getAnoInicio())
+			return false;
+		if (vet1[i].getDiaFim() != vet2[i].getDiaFim())
+			return false;
+		if (vet1[i].getMesFim() != vet2[i].getMesFim())
+			return false;
+		if (vet1[i].getAnoFim() != vet2[i].getAnoFim())
+			return false;
+		if (vet1[i].getPreco() != vet2[i].getPreco())
+			return false;
+		if (vet1[i].getLugares() != vet2[i].getLugares())
+			return false;
+		if (vet1[i].getLugaresV() != vet2[i].getLugaresV())
+			return false;
+	}
+	return true;
+}
+
+//ve se o vetor inicial dos clientes e igual ao final
+//@param1 vetor com informacao sobre os clientes
+//@param2 vetor com informacao sobre os clientes
+bool vetigucli(vector <Client> vet1, vector <Client> vet2) {
+	if (vet1.size() != vet2.size())
+		return false;
+	for (int i = 0; i < vet1.size(); i++) {
+		if (vet1[i].getNome() != vet2[i].getNome())
+			return false;
+		if (vet1[i].getNif() != vet2[i].getNif())
+			return false;
+		if (vet1[i].getAgregFamiliar() != vet2[i].getAgregFamiliar())
+			return false;
+		if (vet1[i].getMoradaRua() != vet2[i].getMoradaRua())
+			return false;
+		if (vet1[i].getMoradaPorta() != vet2[i].getMoradaPorta())
+			return false;
+		if (vet1[i].getMoradaLocalidade() != vet2[i].getMoradaLocalidade())
+			return false;
+		if (vet1[i].getMoradaCPostal() != vet2[i].getMoradaCPostal())
+			return false;
+		if (vet1[i].getMoradaAndar() != vet2[i].getMoradaAndar())
+			return false;
+		if (vet1[i].getPacotAdquiridos() != vet2[i].getPacotAdquiridos())
+			return false;
+		if (vet1[i].getCapGasto() != vet2[i].getCapGasto())
+			return false;
+	}
+	return true;
+}
+
+//funcao que verifica se um ano e bissexto
+//@param1 recebe como parametro um ano
+bool bissexto(int ano) {
+	//formulas que verificam se um ano e bissexto
+	if (ano % 4 == 0 && ano % 100 != 0)
+		return true;
+	else if (ano % 100 == 0 && ano % 400 == 0)
+		return true;
+	else
+		return false;
+}
+
+//ve se uma data existe
+//@param1 recebe como parametro o ano
+//@param2 recebe como parametro mes
+//@param3 recebe como parametro o dia
+bool validdate(int ano, int mes, int dia) {
+	if (mes < 1 || mes > 12)
+		return false;
+	else {
+		switch (mes) {
+		case 1:
+			if (dia < 1 || dia > 31)
+				return false;
+			break;
+		case 2:
+			if (bissexto(ano) == true) {
+				if (dia < 1 || dia > 29)
+					return false;
+			}
+			else
+				if (dia < 1 || dia > 28)
+					return false;
+			break;
+		case 3:
+			if (dia < 1 || dia > 31)
+				return false;
+			break;
+		case 4:
+			if (dia < 1 || dia > 30)
+				return false;
+			break;
+		case 5:
+			if (dia < 1 || dia > 31)
+				return false;
+			break;
+		case 6:
+			if (dia < 1 || dia > 30)
+				return false;
+			break;
+		case 7:
+			if (dia < 1 || dia > 31)
+				return false;
+			break;
+		case 8:
+			if (dia < 1 || dia > 31)
+				return false;
+			break;
+		case 9:
+			if (dia < 1 || dia > 30)
+				return false;
+			break;
+		case 10:
+			if (dia < 1 || dia > 31)
+				return false;
+			break;
+		case 11:
+			if (dia < 1 || dia > 30)
+				return false;
+			break;
+		case 12:
+			if (dia < 1 || dia > 31)
+				return false;
+			break;
+
+		}
+	}
+	return true;
+}
+
+//verifica se um codigo postal e valido e retir os espacos interiores e iniciais e finais a mais
+//@param1 introduzido pelo utlizador
+//@param2 resultante
+bool validcodpostal(string codpostalu, string & codpostal) {
+	codpostal = "";
+	int cont = 0;
+	for (int i = 0; i < codpostalu.length(); i++) {
+		if (isdigit(codpostalu[i]))  //se for numero
+			codpostal += string(1, codpostalu[i]);
+		else if (codpostalu[i] == '-') {
+			codpostal += string(1, codpostalu[i]);
+			cont++;
+			//se houver mais que 1 - nao e valido
+			if (cont > 2)
+				return false;
+		}
+		//se for um carater diferente de numero espaco ou - nao e valido
+		else if (codpostalu[i] != ' ')
+			return false;
+	}
+	//se tiver masi do que 1 - retorna falso
+	if (cont != 1)
+		return false;
+	//se nao tiver escrito nada ou se nao tiver - nao e valido
+	else if (codpostal == "" || cont == 0)
+		return false;
+	//se tiver um - no inicio ou no fim nao e valido
+	else if (codpostal[0] == '-' || codpostal[codpostal.length() - 1] == '-')
+		return false;
+}
+
+//transforma a listagem de pacotes num vetor
+//@param1 uma string comos pacotes
+vector <string> tovector(string pacotes) {
+	string aux = "";
+	vector <string> a;
+	if (pacotes == "-")
+		return a;
+	for (int i = 0; i < pacotes.length(); i++) {
+		if (!isdigit(pacotes[i]) && aux != " ") {
+			a.push_back(aux);
+			aux = "";
+		}
+		else
+			aux += string(1, pacotes[i]);
+	}
+	a.push_back(aux);
+	return a;
+}
+
+//cria um vetor com todos os codigos dos pacotes
+//@param1 vetor com informacao dos pacotes
+vector <string> codvector(vector <Pacotes> pacote) {
+	vector <string> aux;
+	for (int i = 0; i < pacote.size(); i++)
+		aux.push_back(pacote[i].getId());
+	return aux;
+
+}
+
+//diz se um valor esta no vetor ou nao
+//@param1 vetor com os codigos dos pacotes
+//@param2 valor a verificar
+bool invector(vector <string> codigos, string verif) {
+	bool pres = false; //assumo que o valor incialmente nao esta no vetor
+	for (int i = 0; i < codigos.size(); i++) {
+		if (codigos[i] == verif) {
+			pres = true;   // se sim coloca pres em true e sai do ciclo
+			break;
+		}
+	}
+	return pres;
+}
+
+//retorna o indice de um valor num vetor
+//@param1 vetor com os codigos dos pacotes
+//@param2 valor a encontrar
+int indexcod(vector <string> codigos, string valor) {
+	int index;
+	for (int i = 0; i < codigos.size(); i++) {
+		if (codigos[i] == valor) {
+			index = i;
+			return index;
+		}
+	}
+}
+
+//mostra os nomes dos clientes
+//@param1 vetor com informacao dos clientes
+void mostranomes(vector <Client> a) {
+	cout << endl << endl;
+	for (int i = 0; i < a.size(); i++) {
+		cout << i + 1 << ") " << a[i].getNome() << endl;
+	}
+}
+
+//cria um vetor com os pacotes atualmente disponiveis
+//@param1 vetor com os pacotes
+vector <Pacotes> dispac(vector <Pacotes> pacotes) {
+	vector <Pacotes> disponiveis;
+	for (int i = 0; i < pacotes.size(); i++) {
+		if (pacotes[i].getId()[0] != '-')
+			disponiveis.push_back(pacotes[i]);
+	}
+	return disponiveis;
+}
+
+//tira os espaços a mais no inicio e no fim
+//@param1 recebe uma palavra para normalizar
+string normalise(string palavra) {
+	string aux;
+	int cont = 0, inicio, fim;
+	//se nao introziu nada apenas enter
+	if (palavra.length() == 0)
+		return "";
+	else {
+		//conta os espacos na string
+		for (int i = 0; i < palavra.length(); i++) {
+			if (palavra[i] == ' ')
+				cont++;
+		}
+	}
+	//se ela for so espacos ou seja se o seu comprimento for igual ao numero de espacos retorna vazia
+	if (cont == palavra.length())
+		return "";
+	else {
+		//ve onde ocorreu o primeiro nao espaco e guarda em indice
+		for (int k = 0; k < palavra.length(); k++) {
+			if (palavra[k] != ' ') {
+				inicio = k;
+				break;
+			}
+		}
+		//ve onde ocorreu o ultimo nao espaco e guarda em fim
+		for (int i = palavra.length() - 1; i > -1; i--) {
+			if (palavra[i] != ' ') {
+				fim = i;
+				break;
+			}
+		}
+		aux = palavra;
+		palavra = "";
+		//escreve a palavra sem os espacos
+		for (int i = inicio; i < fim + 1; i++) {
+			palavra += aux[i];
+		}
+		return palavra;
+	}
+}
+
+//verifica se uma data contem ou nao carateres e normaliza - a
+//@param1 ano inrroduzido pelo utilizador
+//@param2 mes introduzido pelo utilizador
+//@param3 dia introduzido pelo utilizador
+//@param4 ano normalziado
+//@param5 mes normalziado
+//@param6 dia normalziado
+bool validdigit(string data, string & retano, string & retmes, string & retdia) {
+	string aux = "", aux1 = "", aux2 = "";
+	retano = "", retmes = "", retdia = "";
+	int cont = 0, ind1, ind2;
+	string result = data;
+	while (result.find('/') != string::npos) {
+		cont++;
+		result = result.substr(result.find('/') + 1);
+	}
+	if (cont != 2)
+		return false;
+	cont = 0;
+	for (int i = 0; i < data.length(); i++) {
+		if (data[i] == '/')
+			cont++;
+		else if (cont == 0 && data[i] != '/')
+			aux += string(1, data[i]);
+		else if (cont == 1 && data[i] != '/')
+			aux1 += string(1, data[i]);
+		else if (cont == 2 && data[i] != '/')
+			aux2 += string(1, data[i]);
+	}
+	//remove os espacos no meio a mais
+	//ano
+	for (int i = 0; i < aux.length(); i++) {
+		if (isdigit(aux[i]))
+			retano += string(1, aux[i]);
+		else if (aux[i] != ' ')
+			return false;
+	}
+	//mes
+	for (int i = 0; i < aux1.length(); i++) {
+		if (isdigit(aux1[i]))
+			retmes += string(1, aux1[i]);
+		else if (aux1[i] != ' ')
+			return false;
+	}
+	//dia
+	for (int i = 0; i < aux2.length(); i++) {
+		if (isdigit(aux2[i]))
+			retdia += string(1, aux2[i]);
+		else if (aux2[i] != ' ')
+			return false;
+	}
+}
+
+//verifica se um nome nao contem carateres invalidos
+//@param1 string introduzida pelo utlizador
+bool validname(string nome) {
+	for (int i = 0; i < nome.length(); i++) {
+		if (!isalpha(nome[i]) && nome[i] != ' ')
+			return false;
+	}
+	//se nao tiver escrito nada retorna falso
+	if (normalise(nome) == "")
+		return false;
+	return true;
+}
+
+//verifica se um numero e valido e remove os espacos entre numeros
+//@param1 numero introduzido pelo utilizador
+//@param2 numero resultante
+bool validnum(string numu, string & num) {
+	num = "";
+	for (int i = 0; i < numu.length(); i++) {
+		if (isdigit(numu[i]))
+			num += string(1, numu[i]);
+		else if (numu[i] != ' ')
+			return false;
+	}
+	if (num == "")
+		return false;
+	return true;
+}
+
+//verifica se um andar e valid ou seja se nao contem carateres invalidos neste campo
+//@param1 introduzido pelo utlizador
+//@param2 resultante
+bool validandar(string aux, string & fin) {
+	int indice, cont = 0;
+	aux = normalise(aux);
+	//se nao tiver escrito nada retorna falso
+	if (aux == "")
+		return false;
+	//se nao tiver nenhum andar
+	if (normalise(aux) == "-") {
+		fin = aux;
+		return true;
+	}
+	fin = "";
+	for (int i = 0; i < aux.length(); i++) {
+		if (isdigit(aux[i]))
+			cont++;
+		if (isdigit(aux[i]) || isalpha(aux[i]) || aux[i] == ' ') {  //so podem ser destes tipos os carateres
+			if (fin.length() == 0 && isalpha(aux[i]))    //nao pode ser logo o local: esquerda ou direita ou traseiras ou frente
+				return false;
+			else if (fin.length() == 0 && isdigit(aux[i]))   //se for um numero escreve
+				fin += string(1, aux[i]);
+			else if (fin.length() != 0) {
+				if (isdigit(aux[i]) && isalpha(fin[fin.length() - 1]))   //nao pode ter um numero depois de uma letra
+					return false;
+				else if (aux[i] != ' ')
+					fin += string(1, aux[i]);
+			}
+		}
+	}
+	//se nao tiver nenhum numero retorna falso
+	if (cont == 0)
+		return false;
+	//se so tiver numeros
+	if (fin.length() == cont)
+		return true;
+	//ve onde surgiu a primeria letra
+	for (int k = 0; k < fin.length(); k++) {
+		if (!isdigit(fin[k])) {
+			indice = k;
+			break;
+		}
+	}
+	aux = fin;
+	fin = "";
+	//coloca essa primeria em letra grande
+	for (int i = 0; i < indice + 3; i++) {
+		if (i == indice)
+			fin += string(1, toupper(aux[i]));
+		else
+			fin += string(1, aux[i]);
+	}
+	return true;
+}
+
+//verfica se a lista de pacotes adquiridos e valida se nao introduziu nenhuma letra ou coisas do genero
+//@param1 pacotes introduzidos pelo utilizador
+//@parm2 pacotes resultantes
+bool validpacadq(string pacadqu, string & pacadq) {
+	pacadq = "";
+	for (int i = 0; i < pacadqu.length(); i++) {
+		if (isdigit(pacadqu[i]))
+			pacadq += string(1, pacadqu[i]);
+		else if (pacadqu[i] == ';' || pacadqu[i] == ',')
+			pacadq += " ; ";
+		else if (pacadqu[i] == '-')
+			pacadq += "-";
+		else if (pacadqu[i] != ' ')
+			return false;
+	}
+	return true;
+}
+
+//coloca as letras iniciais em maiusculas
+//@param1 nome a alterar
+void legra(string & nome) {
+	string aux = "";
+	vector <string> param;
+	//cria um vetor com a string
+	for (int i = 0; i < nome.length(); i++) {
+		if (nome[i] != ' ')
+			aux += string(1, nome[i]);
+		else {
+			param.push_back(aux);
+			aux = "";
+		}
+	}
+	param.push_back(aux);
+	nome = "";
+	//coloca em letra grande todas as palavras que nao sejam de, do, da, dos ,das
+	for (int i = 0; i < param.size(); i++) {
+		if (param[i] != "de" && param[i] != "do" && param[i] != "dos" && param[i] != "da" && param[i] != "das")
+			for (int k = 0; k < param[i].length(); k++) {
+				if (k == 0)
+					nome += string(1, toupper(param[i][k]));
+				else
+					nome += string(1, tolower(param[i][k]));
+			}
+		else
+			nome += param[i];
+		nome += " ";
+	}
+	nome = normalise(nome);  //retira os espacos a mais
+}
+
+//apaga espaços intermedios que estejam a mais e coloca em grande o necessario incovando outra funcao
+//@param1 nome com espacos a mais
+//@param2 string normalizada
+void espaint(string aux, string & nome) {
+	nome = "";
+	int espacos = 0;
+	//retira os espacos a mais
+	for (int i = 0; i < aux.length(); i++) {
+		if (isalpha(aux[i])) {
+			if (espacos != 0)
+				espacos = 0;
+			nome += string(1, aux[i]);
+		}
+		else {
+			espacos++;
+			if (espacos == 1)
+				nome += " ";
+		}
+	}
+	nome = normalise(nome);   //retira pos espacos que possam ter ficado a mais devido a concatenacao
+	legra(nome);     //invoca para colocar em grande 
+}
+
+//verifica se um destino e valido e normaliza-o colocando o necessario em maiusculas
+//@param1 introduzido pelo utlizador
+//@param2 resultante
+bool validdest(string destu, string & dest) {
+	string aux = "";
+	dest = "";
+	vector <string> param;
+	//cria um vetor com as palavras, virgulas e - e retorna falso se houver algum caratere que nao seja letras, virgulas ou -
+	for (int i = 0; i < destu.length(); i++) {
+		if (isalpha(destu[i]) || destu[i] == ' ')
+			aux += destu[i];
+		else if (destu[i] == '-' || destu[i] == ',') {
+			param.push_back(normalise(aux));   //adiciona a palavra normalizada
+			param.push_back(string(1, destu[i]));  //adiciona virgula ou -
+			aux = "";
+		}
+		else
+			return false;
+	}
+	param.push_back(normalise(aux));
+	//vai a cada elemento do vetor e...	
+	for (int i = 0; i < param.size(); i++) {
+		if (param[i] != "-" && param[i] != ",") {
+			espaint(param[i], aux); //coloca em grande o necessario e retira os espacos desnecessarios o meio
+			dest += " " + aux;
+		}
+		else if (param[i] == "-")
+			dest += " -";
+		else
+			dest += ",";
+
+	}
+	dest = normalise(dest);    //retira o espaco que fica a mais no inicio
+	return true;
+}
+
+//verifica se um codigo e valido e normaliza-o
+//@param1 introduzido pelo utlizador
+//@param2 resultante
+bool lecopac(string aux, string & nome) {
+	nome = "";
+	for (int i = 0; i < aux.length(); i++) {
+		if ((aux[i] == '-' && nome == "") || isdigit(aux[i]))
+			nome += string(1, aux[i]);
+		else
+			return false;
+	}
+	return true;
+}
+
+//ordena por ordem descrecente o vetor dos locais mais visitados
+//@param1 vetor com o numero de visitas de cada local
+//@param2 vetor com os destinos mais visitados
+void sortDestinos(vector<int>visitas, vector<Destino> & destinos)
+{
+	vector <Destino> aux;
+	int temp = 0;
+	sort(visitas.begin(), visitas.end());
+	for (int i = visitas.size() - 1; i >= 0; i--)
+	{
+		if (temp != visitas.at(i))
+		{
+			for (int j = 0; j < destinos.size(); j++)
+			{
+				if (visitas.at(i) == destinos.at(j).Visitas)
+				{
+					aux.push_back(destinos.at(j));
+					temp = visitas.at(i);
+				}
+			}
+		}
+	}
+	destinos = aux;
+}
+
+//coloca os locais com o respetivo numero de visitas no vetor de structs Destino,e caso tenha um local repetido ele incrementa o numero de visitas
+//@param1 vetor com os destinos mais visitados
+//@param2 vetor com locais já visitados
+//@param3 numero de visitas dos locais
+//@param4 identificador do pacote
+//@param5 indice do pacote de cada destino
+void incrementarVisitas(vector<Destino> & destinos, vector <string> locais, int visitas, string idPacote, int index)
+{
+	Destino aux;
+	if (destinos.empty())
+	{
+		for (int i = 0; i < locais.size(); i++)
+		{
+			aux.Local = locais.at(i);
+			aux.Visitas = visitas;
+			if (stoi(idPacote) > 0)
+			{
+				aux.index.push_back(index);
+			}
+			destinos.push_back(aux);
+			aux.index.clear();
+		}
+	}
+	else
+	{
+		for (int k = 0; k < locais.size(); k++)
+		{
+			for (int j = 0; j < destinos.size(); j++)
+			{
+				if (destinos.at(j).Local == locais.at(k))
+				{
+					destinos.at(j).Visitas += visitas;
+					if (stoi(idPacote) > 0)
+					{
+						destinos.at(j).index.push_back(index);
+					}
+				}
+			}
+			aux.Local = locais.at(k);
+			aux.Visitas = visitas;
+			if (stoi(idPacote) > 0)
+			{
+				aux.index.push_back(index);
+			}
+			destinos.push_back(aux);
+			aux.index.clear();
+		}
+	}
+}
+
+//recebe o destino de cada pacote e coloca os locais em um vetor
+//@param1 destino do respetivo pacote
+//@param2 vetor com o(s) destino(s) do mesmo pacote
+void separarDestinos(string aux, vector<string> & destinos)
+{
+	string temp;
+	aux = aux.substr(aux.find('-') + 1, aux.size());      //le os destinos para lem do -
+	for (int i = 0; i < aux.size(); i++)
+	{
+		if (aux.at(i) == ',')
+		{
+			destinos.push_back(temp);      //se for , junt o destino ao vetor dos destinos
+			temp.clear();
+		}
+		else
+		{
+			temp.push_back(aux.at(i));        //cria o destino
+		}
+	}
+	destinos.push_back(temp);
+}
+
+//cria um vetor de structs Destino com todos os destinos ordenados de ordem decrescente,dos mais visitados para os menos visitados
+//@param1 vetor com os distinos mais visitados
+//@param2 vetor com a informação dos pacotes
+void destinosMaisVisitados(vector <Destino> & destinos, vector <Pacotes> Pacotes)
+{
+	vector <string> locais;
+	vector <int> visitas;
+	for (int i = 0; i < Pacotes.size(); i++)
+	{
+		locais.clear();
+		separarDestinos(Pacotes.at(i).getDestino(), locais);
+		incrementarVisitas(destinos, locais, stoi(Pacotes.at(i).getLugaresV()), Pacotes.at(i).getId(), i);
+	}
+	for (int j = 0; j < destinos.size(); j++)
+	{
+		visitas.push_back(destinos.at(j).Visitas);
+	}
+	sortDestinos(visitas, destinos);
+}
+
+//obtem o(s) local/locais que cada cliente já visitou e vê se algum dos locais mais visitados não está na lista, o primeiro que ele não encontrar retorna
+//@param1 destinos visitados pelo cliente
+//@param2 vetor com a informação de cada pacote
+//@param3 vetor com os destinos mais visitados por ordem decrescente
+int destinosDoCliente(vector<string> aux, vector<Pacotes>Pacotes, vector<Destino>destinos)
+{
+	vector <string> temp;
+	for (int i = 0; i < aux.size(); i++)
+	{
+		if (aux.at(i) != "")
+		{
+			for (int j = 0; j < Pacotes.size(); j++)
+			{
+				if (aux.at(i) == Pacotes.at(j).getId() || "-" + aux.at(i) == Pacotes.at(j).getId())
+				{
+					separarDestinos(Pacotes.at(j).getDestino(), temp);
+				}
+			}
+		}
+	}
+	if (temp.empty())
+	{
+		for (int x = 0; x < destinos.size(); x++)
+		{
+			if (destinos.at(x).index.size() != 0)
+			{
+				return destinos.at(x).index.at(0);
+			}
+		}
+	}
+	else
+	{
+		for (int k = 0; k < destinos.size(); k++)
+		{
+			bool continuar = true;
+			if (destinos.at(k).index.size() != 0)
+			{
+				for (int u = 0; u < temp.size(); u++)
+				{
+					if (temp.at(u) == destinos.at(k).Local)
+					{
+						continuar = false;
+						break;
+					}
+				}
+				if (continuar)
+				{
+					return destinos.at(k).index.at(0);
+				}
+			}
+		}
+	}
+}
+
+// verificar se o utilizador introduziu corretamente a opção escolhida
+//@param1 input do utilizador
+//@param2 o numero maixmo de opcoes validas a p+artir de 1
+void verificarOpcoes(int& input, int opcoes)
+{
+		while (cin.fail() || (input > opcoes) || (input < 1))
+		{
+			if (cin.eof()) 
+				cin.clear();
+			else {
+				cin.clear(), cin.ignore(1000, '\n');
+			}
+			cerr << "\nOpcao invalida!Tente novamente: ";
+			cin >> input;
+		}
+
+}
+
+//atualiza os ficheiros
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void acabar(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	atucli(cliente, nomeclifi);
+	atupac(pacote, imp, nomepacfi);
+	cout << "\n\nOBRIGADO PELA SUA VISITA!\n\n";
+}
+
+//----------------------ATUALIZA FICHEIROS----------------------------------------------
+
+//atualiza o ficheiro com informacao dos clientes criando um ficheiro adicional
+//@param1 vetor com informacao dos clientes
+//@param2 nome do ficheiro dos clientes
+void atucli(vector <Client> cliente, string nome) {
+	if (vetigucli(cliente, paraclienteaux) == false) {
+		string aux;
+		ofstream saida;
+		//vai atualizar a informcao primeiramente para um ficheiro auxiliar para nao correr o risco de perder informacao
+		saida.open("auxiliar");
+		for (int i = 0; i < cliente.size(); i++) {
+			saida << cliente[i].getNome() << endl;
+			saida << cliente[i].getNif() << endl;
+			saida << cliente[i].getAgregFamiliar() << endl;
+			saida << cliente[i].getMoradaRua() << " / " << cliente[i].getMoradaPorta() << " / " << cliente[i].getMoradaAndar() << " / " << cliente[i].getMoradaCPostal() << " / " << cliente[i].getMoradaLocalidade() << endl;
+			saida << cliente[i].getPacotAdquiridos() << endl;
+			saida << cliente[i].getCapGasto() << endl;
+			saida << "::::::::::" << endl;
+		}
+		saida.close();
+		ifstream entrada;
+		entrada.open("auxiliar");
+		ofstream saida2;
+		saida2.open(nome);
+		//atualiza a informacao no ficheiro dos clientes original
+		while (getline(entrada, aux)) {
+			saida2 << aux << endl;
+		}
+		saida2.close();
+		entrada.close();
+	}
+}
+
+//atualiza o ficheiro dos pacotes criando um ficheiro adicional
+//@param1 recebe como parametro o vetor com informacao dos pacotes
+//@param2 recebe como parametro uma string que diz qual foi o ultimo a ser criado
+//@param3 nome do ficheiro dos pacotes
+void atupac(vector <Pacotes> pacote, string imp, string nome) {
+	if (vetigupac(pacote, parapacotesaux, imp, impi) == false) {
+		string aux;
+		ofstream saida;
+		//vai atualizar a informcao primeiramente para um ficheiro auxiliar para nao correr o risco de perder informacao
+		saida.open("auxiliar1");
+		saida << imp << endl;
+		for (int i = 0; i < pacote.size(); i++) {
+			saida << pacote[i].getId() << endl;
+			saida << pacote[i].getDestino() << endl;
+			saida << pacote[i].getAnoInicio() << '/' << pacote[i].getMesInicio() << '/' << pacote[i].getDiaInicio() << endl;
+			saida << pacote[i].getAnoFim() << '/' << pacote[i].getMesFim() << '/' << pacote[i].getDiaFim() << endl;
+			saida << pacote[i].getPreco() << endl;
+			saida << pacote[i].getLugares() << endl;
+			saida << pacote[i].getLugaresV() << endl;
+			saida << "::::::::::" << endl;
+		}
+		saida.close();
+		ifstream entrada;
+		entrada.open("auxiliar1");
+		ofstream saida2;
+		saida2.open(nome);
+		//atualiza a informacao para o ficheiro dos pacotes original
+		while (getline(entrada, aux)) {
+			saida2 << aux << endl;
+		}
+		saida2.close();
+		entrada.close();
+	}
+}
+
+//---------------------Estatisticas-------------------------
+
+//visualiza a infor macao sobre um cliente especifico
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void clienteesp(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	char cont;
+	int indice;
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\tINFORMACAO DE UM CLIENTE ESPECIFICO\n" << endl;
+	//mostra os nomes ods clietes atuais
+	for (int i = 0; i < cliente.size(); i++) {
+		cout << i + 1 << ")" << cliente[i].getNome() << ";\n";
+	}
+	cout << cliente.size() + 1 << ")Voltar;\n";
+	cout << "\nIntroduza a opcao referente a sua escolha: ";
+	cin >> indice;
+	//Deteta se houve algum erro no input de dados
+	verificarOpcoes(indice, cliente.size() + 1);
+	cin.ignore(1000, '\n');
+	//ve se quer voltar
+	if (cliente.size() + 1 == indice)
+	{
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		estatisticasmenu(cliente, pacote, imp);
+		return;
+	}
+	cout << endl;
+	cliente[indice - 1].showClient();
+}
+
+//mostra informacao de todos os clientes
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void clienteger(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	char cont;
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\tINFORMACAO DE TODOS OS CLIENTES \n\n";
+	for (int i = 0; i < cliente.size(); i++) {
+		cout << "Cliente " << i + 1 << " \n";
+		cliente[i].showClient();
+		cout << endl;
+	}
+}
+
+//Informacao sobre pacotes adquiridos por um determinado cliente
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void clivend(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	char cont;
+	int indice;
+	bool voltar = false;
+	vector <string> aux;
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\PACOTES VENDIDOS A UM DETERMINADO CLIENTE\n\n";
+	cout << "CLIENTES\n\n";
+	//mostra os clientes
+	for (int i = 0; i < cliente.size(); i++) {
+		cout << i + 1 << ")" << cliente[i].getNome() << ";\n";
+	}
+	cout << cliente.size() + 1 << ")Voltar;\n";
+	cout << "\nIntroduza a opcao referente ao cliente que deseja saber: ";
+	cin >> indice;
+	cout << endl;
+	//deteta se ocorreu algum problema com o input
+	verificarOpcoes(indice, cliente.size() + 1);
+	//ve se quer voltar
+	if (cliente.size() + 1 == indice) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		vendinf(cliente, pacote, imp);
+		return;
+	}
+	cin.ignore(1000, '\n');
+	//coloca os vetores adquiridos  num vetor
+	aux = tovector(cliente[indice - 1].getPacotAdquiridos());
+	cout << endl << endl << "Pacotes Adquiridos por: " << cliente[indice - 1].getNome() << "\n\n";
+	//mostra os pacotes adquiridos
+	//se tiver algum
+	if (!aux.empty()) {
+		//cilo para os pacotes
+		for (int i = 0; i < pacote.size(); i++) {
+			//cilo para os pacotes do cliente
+			for (int k = 0; k < aux.size(); k++) {
+				//ve se ha algum dos codigos nos pacotes caso estejam disponiveis
+				if (pacote[i].getId() == aux[k]) {
+					pacote[i].showPacote(), cout << endl;
+				}
+				//ve se ha algum dos codigos nos pacotes caso estejam indisponiveis
+				else if (pacote[i].getId()[0] == '-' && pacote[i].getId().substr(1) == aux[k]) {
+					pacote[i].showPacote(), cout << endl;
+				}
+			}
+		}
+	}
+	// se nao tiver nenhum
+	else
+		cout << "Nao adquiriu nenhum pacote!";
+}
+
+//Informacao sobre os pacotes vendidos a todos os clientes
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void todvend(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	char cont;
+	int indice;
+	vector <string> aux;
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\tPACOTES ADQUIRIDOS\n\n";
+	//ciclo para todos os clientes
+	for (int i = 0; i < cliente.size(); i++) {
+		cout << endl << endl << "Pacotes adquiridos por: " << cliente[i].getNome() << endl << endl;
+		aux = tovector(cliente[i].getPacotAdquiridos());
+		//se o cliente tiver adquirido algum pacote
+		if (!aux.empty()) {
+			//ciclo para todos os pacotes
+			for (int j = 0; j < pacote.size(); j++) {
+				//ciclo para todos os pacotes que oc liente adquiriu
+				for (int k = 0; k < aux.size(); k++) {
+					//todos os que foram adquiridos e estao disponiveis
+					if (pacote[j].getId() == aux[k]) {
+						pacote[j].showPacote();
+						cout << endl;
+					}
+					//todos os que adquiriram e que estao indisponiveis
+					else if (pacote[j].getId()[0] == '-' && pacote[j].getId().substr(1) == aux[k]) {
+						pacote[j].showPacote();
+						cout << endl;
+					}
+				}
+			}
+		}
+		else
+			cout << "Nao adquiriu nenhum pacote!";
+	}
+}
+
+//mostra quais os pacotes disponiveis
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void disp(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\tPACOTES DISPONIVEIS\n\n";
+	for (int i = 0; i < pacote.size(); i++) {
+		if (pacote[i].getId()[0] != '-') {
+			pacote[i].showPacote();
+			cout << endl;
+		}
+	}
+}
+
+//mostra pacote relativo a um destino especifico
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void destesp(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	char cont;
+	int indice;
+	vector <Pacotes> disponiveis;
+	cout << "\n\n##########################################################################################";
+	cout << "\n\n\t\t\tPACOTES DISPONIVEIS REFERENTES A UM DESTINO ESPECIFICO\n\n";
+	//forma um vetor com os pacotes disponiveis
+	disponiveis = dispac(pacote);
+	//mostra todos os destinos que estao disponiveis
+	for (int i = 0; i < disponiveis.size(); i++)
+		cout << i + 1 << ")" << disponiveis[i].getDestino() << ";\n";
+	cout << disponiveis.size() + 1 << ")Voltar;\n";
+	cout << "\nDigite o numero correspondente a sua escolha: ";
+	cin >> indice;
+	//Deteta se houve erro
+	verificarOpcoes(indice, pacote.size() + 1);
+	//ve se quer voltar
+	if (disponiveis.size() + 1 == indice) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotdisp(cliente, pacote, imp);
+		return;
+	}
+	cin.ignore(1000, '\n');
+	//mostra o pacote referente ao destino escolhido
+	cout << endl << "Relativo ao seguinte destino: " << disponiveis[indice - 1].getDestino() << endl << endl;
+	disponiveis[indice - 1].showPacote();
+}
+
+//mostra o pacote refernte ao destino escolhido entre duas datas
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void dudat(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	int cont = 1;
+	vector <Pacotes> disponiveis;
+	bool invalid = true, voltar = false;
+	string anopar, mespar, diapar, anoche, mesche, diache; //servem para recolher os anos meses e dias introduzidos pelo utilizador
+	int dataparu, datacheu, dataparpac, datachepac; //cria um numero concatenando as string das datas referentes as de partida e chegada do utilizador(2 iniciais) e as duas finais relativas aos pacotes
+	string aux, data;   //auxilia a leitura de dados
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\tPACOTES DISPONIVEIS ENTRE DUAS DATAS\n\n";
+	//so sai do ciclo quando as datas inserirem forem validas
+	//verifica se as datas sao validas
+	while (invalid)
+	{
+		cout << "Introduza a data de partida no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, data);
+		//verifica se sao inteiros
+		while (cin.fail() || !validdigit(data, anopar, mespar, diapar)) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cin.clear();
+			cerr << "\nErro no campo data! Tente novamente!\n";
+			cout << "Introduza a data de partida no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, data);
+		}
+		//ve se quer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotdisp(cliente, pacote, imp);
+			return;
+		}
+		//caso seja 6 fica 06
+		if (mespar.length() == 1)
+			mespar = "0" + mespar;
+		if (diapar.length() == 1)
+			diapar = "0" + diapar;
+		cout << "Introduza a data de chegada no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, data);
+		//verifica se sao inteiros
+		while (cin.fail() || !validdigit(data, anoche, mesche, diache)) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cerr << "\nErro no campo data! Tente novamente!\n";
+			cout << "Introduza a data de partida no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, data);
+		}
+		//ve se quer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotdisp(cliente, pacote, imp);
+			return;
+		}
+		//caso seja 6 fica 06
+		if (mesche.length() == 1)
+			mesche = "0" + mesche;
+		if (diache.length() == 1)
+			diache = "0" + diache;
+		dataparu = stoi(anopar + mespar + diapar);
+		datacheu = stoi(anoche + mesche + diache);
+		//verifica se a data de chegada e antes da de partida ou se alguma das datas nao existe
+		if (validdate(stoi(anopar), stoi(mespar), stoi(diapar)) == false || validdate(stoi(anoche), stoi(mesche), stoi(diache)) == false || datacheu < dataparu) {
+			cout << "\nInseriu pelo menos uma data incorreta! Tente novamente!";
+			cout << endl;
+		}
+		else
+			invalid = false;
+	}
+	cout << endl;
+	disponiveis = dispac(pacote);
+	//mostra os pacotes disponiveis entre as datas do utilizador
+	for (int i = 0; i < disponiveis.size(); i++) {
+		dataparpac = stoi(disponiveis[i].getAnoInicio() + disponiveis[i].getMesInicio() + disponiveis[i].getDiaInicio());
+		datachepac = stoi(disponiveis[i].getAnoFim() + disponiveis[i].getMesFim() + disponiveis[i].getDiaFim());
+		//so faz isto se a partida do utilizador for antes da do  pacote ou a de chegada do pacote for antes do utilizador
+		if (dataparu <= dataparpac && datachepac <= datacheu) {
+			cout << "Pacote " << cont << endl << endl;
+			disponiveis[i].showPacote();
+			cout << endl;
+			cont++;
+		}
+	}
+	//caso nao hajam pacotes disponiveis
+	if (cont == 1)
+		cout << "Nao ha pacotes disponiveis entre essas duas datas!";
+}
+
+//mostra o pacote disponivel relativo a um destino e data especifica
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void destespdudat(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	int cont = 1, opcao;
+	bool invalid = true;
+	bool voltar = false;
+	vector <Pacotes> disponiveis;
+	string anopar, mespar, diapar, anoche, mesche, diache; //servem para recolher os anos meses e dias introduzidos pelo utilizador
+	string aux, data;   // auxilia a leitura de dados
+	int dataparu, datacheu, dataparpac, datachepac; //cria um numero concatenando as string das datas referentes as de partida e chegada do utilizador(2 iniciais) e as duas finais relativas aos pacotes
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\tPACOTES DISPONIVEIS EM RELACAO A DUAS DATAS E UM DESTINO ESPECIFICO\n\n";
+	//deteta se as datas sao validas
+	while (invalid)
+	{
+		cout << "Introduza a data de partida no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, data);
+		//verifica se os digitos sao inteiros
+		while (cin.fail() || !validdigit(data, anopar, mespar, diapar)) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cout << "\nErro no campo data de partida! Tente novamente!\n";
+			cout << "Introduza a data de partida no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, data);
+		}
+		//ve se quer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotdisp(cliente, pacote, imp);
+			return;
+		}
+		//caso seja 6 passa a 06
+		if (mespar.length() == 1)
+			mespar = "0" + mespar;
+		if (diapar.length() == 1)
+			diapar = "0" + diapar;
+		cout << "Introduza a data de chegada no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, data);
+		//verifica se os digitos sao inteiros
+		while (cin.fail() || !validdigit(data, anoche, mesche, diache)) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cout << "\nErro no campo data de chegada! Tente novamente!\n";
+			cout << "Introduza a data de partida no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, data);
+		}
+		//ve se quer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotdisp(cliente, pacote, imp);
+			return;
+		}
+		//caso seja 6 passa a 06
+		if (mesche.length() == 1)
+			mesche = "0" + mesche;
+		if (diache.length() == 1)
+			diache = "0" + diache;
+		dataparu = stoi(anopar + mespar + diapar);
+		datacheu = stoi(anoche + mesche + diache);
+		//verifica se a data de chegada e antes da de partida ou se houve algum erro com alguma data
+		if (validdate(stoi(anopar), stoi(mespar), stoi(diapar)) == false || validdate(stoi(anoche), stoi(mesche), stoi(diache)) == false || datacheu < dataparu) {
+			cout << "\nInseriu pelo menos umda data incorreta! Tente novamente!";
+			cout << endl;
+		}
+		else
+			invalid = false;
+	}
+	cout << endl;
+	//forma os destinos disponiveis entre as datas
+	disponiveis = dispac(pacote);
+	//mostra os disponiveis entre as datas 
+	for (int i = 0; i < disponiveis.size(); i++) {
+		dataparpac = stoi(disponiveis[i].getAnoInicio() + disponiveis[i].getMesInicio() + disponiveis[i].getDiaInicio());
+		datachepac = stoi(disponiveis[i].getAnoFim() + disponiveis[i].getMesFim() + disponiveis[i].getDiaFim());
+		//so faz isto se a partida do utilizador for antes da do  pacote ou a de chegada do pacote for antes do utilizador
+		if (dataparu <= dataparpac && datachepac <= datacheu) {
+			cout << cont << ")" << disponiveis[i].getDestino() << endl;
+			cont++;
+		}
+	}
+	//ja que se houver pelo menos um pacote disponivel o cont fica pelo menos a dois entao se houver pacotes faz isto
+	if (cont != 1) {
+		//o utilizador seleciona um
+		cout << disponiveis.size() + 1 << ")Voltar;\n";
+		cout << "\n\nDigite o numero correspondente a sua opcao: ";
+		cin >> opcao;
+		verificarOpcoes(opcao, disponiveis.size() + 1);
+		//ve se quer voltar
+		if (opcao == disponiveis.size() + 1) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotdisp(cliente, pacote, imp);
+			return;
+		}
+		cout << endl << endl;
+		disponiveis[opcao - 1].showPacote();
+		cin.ignore(1000, '\n');
+	}
+	//se nao faz isto
+	else
+		cout << "Nao existem pacotes disponiveis entre essas duas datas!";
+}
+
+//diz qual foi o numero de pacotes e lucro obtidos
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void vendluc(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	char cont;
+	int soma = 0, lucro = 0, pacvend = 0;
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\tINFORMACAO SOBRE VENDAS E LUCRO DOS PACOTES\n\n";
+	for (int i = 0; i < pacote.size(); i++) {
+		if (pacote[i].getId()[0] == '-') {
+			//soma os pacotes esgotados
+			pacvend++;
+			//Calcula o preco total de cada pacote esgtado e soma-os 
+			lucro += stoi(pacote[i].getLugaresV()) * stoi(pacote[i].getPreco());
+		}
+	}
+	cout << "PACOTES ESGOTADOS............................: " << pacvend;
+	cout << "\nLUCRO TOTAL EM EUROS(REFERENTE AOS ESGOTADOS): " << lucro;
+}
+
+//diz qual dos pacotes mais visitados falta visitar a cada cliente
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void pacotesRecomendadosAClientes(vector<Client> Clientes, vector <Pacotes> Pacotes, string imp)
+{
+	vector<Destino> destinos;
+	vector<string> aux;
+	int temp;
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\tRECOMENDACAO PACOTES MAIS VISITADOS\n\n";
+	destinosMaisVisitados(destinos, Pacotes);    //cria um vetor destinos com os mais visitados
+	for (int i = 0; i < Clientes.size(); i++)
+	{
+		cout << "\n\nCliente: " << Clientes.at(i).getNome() << endl << endl;
+		aux = tovector(Clientes.at(i).getPacotAdquiridos());
+		temp = destinosDoCliente(aux, Pacotes, destinos);
+		Pacotes.at(temp).showPacote();
+	}
+	cout << "\n\nOPERACAO CONCLUIDA COM SUCESSO!";
+}
+
+//-------------------------CLIENTES-------------------------
+
+//cria um novo cliente
+//@param1 vetor que contem informaçao dos clietes e e alterado
+//@param2 vetor  que contem informaçao sobre pacotes
+//@param3 string com informacao do ultimo a ser criado
+void cricli(vector <Client> & cliente, vector <Pacotes> pacote, string imp) {
+	cout << endl;
+	Client novo;
+	bool voltar = false;
+	string aux;   //auxilia leitura de dados
+	string nome, rua, nif, agreg, pac, porta, localidade, codpostal, andar, capgasto;   //auxilia leitura de dados
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\tCRIACAO DE CLIENTES\n\n";
+	cout << "Introduza o nome(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro  
+	while (cin.fail() || validname(normalise(aux)) == false) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo nome!Tente novamente!";
+		cout << "\nIntroduza o nome(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	espaint(normalise(aux), nome);
+	cout << "\nIntroduza o NIF(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (cin.fail() || validnum(aux, nif) == false || nif.length() != 9) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		else if (validnum(aux, nif) == false) {
+			cerr << "\nErro no campo NIF!Tente novamente!";
+			cout << "\nIntroduza o NIF(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+		}
+		else if (nif.length() < 9) {
+			cerr << "\nIntroduziu carateres a menos no campo NIF!Tente novamente!";
+			cout << "\nIntroduza o NIF(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+		}
+		else {
+			cerr << "\nIntroduziu carateres a mais no campo NIF!Tente novamente!";
+			cout << "\nIntroduza o NIF(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+		}
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	cout << "\nIntroduza o agregado familiar(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (cin.fail() || validnum(aux, agreg) == false) {
+		cerr << "\nErro no campo agregado familiar!Tente novamente!";
+		cout << "\nIntroduza o agregado familiar(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	cout << "\nIntroduza a rua(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (cin.fail() || validname(normalise(aux)) == false) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo rua!Tente novamente!";
+		cout << "\nIntroduza a rua(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	espaint(normalise(aux), rua);
+	cout << "\nIntroduza o numero da porta(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (cin.fail() || validnum(aux, porta) == false) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo porta!Tente novamente!";
+		cout << "\nIntroduza o numero da porta(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	cout << "\nIntroduza o andar(se n tiver andar digite -)(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (cin.fail() || validandar(aux, andar) == false) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo andar!Tente novamente!";
+		cout << "\nIntroduza o andar(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	cout << "\nIntroduza o codigo postal(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (cin.fail() || validcodpostal(aux, codpostal) == false) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo codigo postal!Tente novamente!";
+		cout << "\nIntroduza o codigo postal(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	cout << "\nIntroduza a localidade(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (cin.fail() || validname(normalise(aux)) == false) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo localidade!Tente novamente!";
+		cout << "\nIntroduza a localidade(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	espaint(normalise(aux), localidade);
+	cout << "\nIntroduza o codigo dos pacotes que ja adquiriu(se nao adquiriu nenhum ou se vai adquirir agora um, digite -)(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (cin.fail() || validpacadq(aux, pac) == false) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo pacotes adquiridos!Tente novamente!";
+		cout << "\nIntroduza o codigo dos pacotes que ja adquiriu(se nao adquiriu nenhum ou se vai adquirir agora um, digite -)(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	cout << "\nIntroduza o capital gasto(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (cin.fail() || validnum(aux, capgasto) == false) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo capital gasto!Tente novamente!";
+		cout << "\nIntroduza o capital gasto(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	//acrescenta a informacao ao vetor
+	novo.setNome(nome);
+	novo.setNif(nif);
+	novo.setAgregFamiliar(agreg);
+	novo.setMoradaRua(rua);
+	novo.setMoradaPorta(porta);
+	novo.setMoradaAndar(andar);
+	novo.setMoradaCPostal(codpostal);
+	novo.setMoradaLocalidade(localidade);
+	novo.setPacotAdquiridos(pac);
+	novo.setCapGasto(capgasto);
+	cliente.push_back(novo);
+	cout << "\n\nCLIENTE CRIADO COM SUCESSO!";
+}
+
+//altera o conteudo de um cliente
+//@param1 vetor que contem informaçao dos clietes e e alterado
+//@param2 vetor  que contem informaçao sobre pacotes
+//@param3 string com informacao do ultimo a ser criado
+void altcli(vector <Client> & cliente, vector <Pacotes> pacote, string imp) {
+	char cont;
+	bool voltar = false;
+	int opcao, indice;   //indice guarda o indice do cliente a alterar, opcao para o que pretende alterar
+	string nome, rua, nif, agreg, pac, porta, localidade, codpostal, andar, capgasto;  //auxilia a leitura de dados
+	string aux;    //auxilia a leitura de dados
+	cout << "\n\n##########################################################################################";
+	cout << endl << "\n\t\t\tALTERACAO DE CLIENTES\n";
+	//mostra os nomes dos clientes
+	for (int i = 0; i < cliente.size(); i++) {
+		cout << i + 1 << ")" << cliente[i].getNome() << ";" << endl;
+	}
+	cout << cliente.size() + 1 << ")Voltar;\n";
+	cout << "\nIntroduza a opcao referente ao cliente que pretende alterar: ";
+	cin >> indice;
+	//deteta se houve erro
+	while (indice < 1 || indice > cliente.size() + 1 || cin.fail()) {
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cerr << "\nOpcao invalida!Tente novamente: ";
+		cin >> indice;
+	}
+	//ve se quer voltar
+	if (cliente.size() + 1 == indice) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	cin.ignore(1000, '\n');
+	cout << endl << endl;
+	cout << "\n\nPARAMETRO A ALTERAR\n\n1)Nome;\n2)Nif;\n3)Morada;\n4)Agregado Familiar;\n5)Pacotes Adquiridos;\n6)Capital Gasto;\n7)Voltar;";
+	cout << "\n\nIntroduza a sua opcao: ";
+	cin >> opcao;
+	//deteta se houve erro
+	while (cin.fail() || opcao < 1 || opcao > 7) {
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cerr << "\nOpcao Invalida!Tente novamente: ";
+		cin >> opcao;
+	}
+	//ve se quer voltar
+	if (opcao == 7) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	cin.ignore(1000, '\n');
+	//caso tenha selecionado a opcao morada mostra os disponiveis para alterar dentro deste parametro
+	if (opcao == 3) {
+		cout << "\n\nMORADA\n\n1)Rua;\n2)Porta;\n3)Codigo Postal;\n4)Andar;\n5)Localidade;\n6)Voltar;";
+		cout << "\n\nIntroduza a sua opcao: ";
+		cin >> opcao;
+		//verifica opcao valida?
+		while (cin.fail() || opcao < 1 || opcao > 6) {
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cerr << "\nOpcao Invalida!Tente novamente: ";
+			cin >> opcao;
+		}
+		//ve se quer voltar
+		if (opcao == 6) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			clientemenu(cliente, pacote, imp);
+			return;
+		}
+		cin.ignore(1000, '\n');
+		cout << endl;
+		switch (opcao) {
+		case 1:
+			cout << "Introduza a rua(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			//verifica se ocorreu algum erro
+			while (cin.fail() || validname(normalise(aux)) == false) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo rua!Tente novamente!";
+				cout << "\nIntroduza a rua(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				clientemenu(cliente, pacote, imp);
+				return;
+			}
+			espaint(normalise(aux), rua);
+			cliente[indice - 1].setMoradaRua(rua);
+			break;
+		case 2:
+			cout << "Introduza o numero da porta(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			//verifica se ocorreu algum erro
+			while (cin.fail() || validnum(aux, porta) == false) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo portaTente novamente!";
+				cout << "\nIntroduza o numero da porta(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				clientemenu(cliente, pacote, imp);
+				return;
+			}
+			cliente[indice - 1].setMoradaPorta(porta);
+			break;
+		case 3:
+			cout << "Introduza o codigo postal(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			//verifica se ocorreu algum erro
+			while (cin.fail() || validcodpostal(aux, codpostal) == false) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo codigo postal!Tente novamente!";
+				cout << "\nIntroduza o codigo postal(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				clientemenu(cliente, pacote, imp);
+				return;
+			}
+			cliente[indice - 1].setMoradaCPostal(codpostal);
+			break;
+		case 4:
+			cout << "Introduza o andar(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			//verifica se ocorreu algum erro
+			while (cin.fail() || validandar(aux, andar) == false) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo andar!Tente novamente!";
+				cout << "\nIntroduza o andar(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				clientemenu(cliente, pacote, imp);
+				return;
+			}
+			cliente[indice - 1].setMoradaAndar(andar);
+			break;
+		case 5:
+			cout << "Introduza a localidade(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			//verifica se ocorreu algum erro
+			while (cin.fail() || validname(normalise(aux)) == false) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo localidade!Tente novamente!";
+				cout << "\nIntroduza a localidade(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				clientemenu(cliente, pacote, imp);
+				return;
+			}
+			espaint(normalise(aux), localidade);
+			cliente[indice - 1].setMoradaLocalidade(localidade);
+			break;
+		default:
+			cout << " ";
+		}
+	}
+	else {
+		cout << endl << endl;
+		switch (opcao) {
+		case 1:
+			cout << "Introduza o nome(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			//verifica se ocorreu algum erro
+			while (cin.fail() || validname(normalise(aux)) == false) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo nome!Tente novamente!";
+				cout << "\nIntroduza o nome(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				clientemenu(cliente, pacote, imp);
+				return;
+			}
+			espaint(normalise(aux), nome);
+			cliente[indice - 1].setNome(nome);
+			break;
+		case 2:
+			cout << "Introduza o NIF(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			//verifica se ocorreu algum erro
+			while (cin.fail() || validnum(aux, nif) == false || nif.length() != 9) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				else if (validnum(aux, nif) == false) {
+					cerr << "\nErro no campo NIF!Tente novamente!";
+					cout << "\nIntroduza o NIF(CTRL + Z para voltar ao menu anterior): ";
+					getline(cin, aux);
+				}
+				else if (nif.length() < 9) {
+					cerr << "\nIntroduziu carateres a menos no campo NIF!Tente novamente!";
+					cout << "\nIntroduza o NIF: ";
+					getline(cin, aux);
+				}
+				else {
+					cerr << "\nIntroduziu carateres a mais no campo NIF!Tente novamente!";
+					cout << "\nIntroduza o NIF: ";
+					getline(cin, aux);
+				}
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				clientemenu(cliente, pacote, imp);
+				return;
+			}
+			cliente[indice - 1].setNif(nif);
+			break;
+		case 4:
+			cout << "Introduza o agregado familiar(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			//verifica se ocorreu algum erro
+			while (cin.fail() || validnum(aux, agreg) == false) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo agregado familiar!Tente novamente!";
+				cout << "\nIntroduza o agregado familiar(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				clientemenu(cliente, pacote, imp);
+				return;
+			}
+			cliente[indice - 1].setAgregFamiliar(agreg);
+			break;
+		case 5:
+			cout << "Introduza os pacotes adquiridos(todos eles, digite - para nenhum pacote)(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			//verifica se ocorreu algum erro
+			while (cin.fail() || validpacadq(aux, pac) == false) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo pacotes adquiridos!Tente novamente!";
+				cout << "\nIntroduza os pacotes adquiridos(se nao adquiriu nenhum ou se vai adquirir agora um, digite -)(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				clientemenu(cliente, pacote, imp);
+				return;
+			}
+			cliente[indice - 1].setPacotAdquiridos(pac);
+			break;
+		case 6:
+			cout << "Introduza o capital gasto(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			while (cin.fail() || validnum(aux, capgasto) == false) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo capital gasto!Tente novamente!";
+				cout << "Introduza o capital gasto(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				clientemenu(cliente, pacote, imp);
+				return;
+			}
+			cliente[indice - 1].setCapGasto(capgasto);
+		default:
+			cout << " ";
+		}
+	}
+	cout << "\n\nCLIENTE ALTERADO COM SUCESSO!";
+}
+
+//remove um cliente
+//@param1 vetor que contem informaçao dos clietes e e alterado
+//@param2 vetor  que contem informaçao sobre pacotes
+//@param3 string com informacao do ultimo a ser criado
+void remcli(vector <Client> & cliente, vector <Pacotes> pacote, string imp) {
+	char cont;
+	bool voltar = false;
+	int indice;
+	cout << "\n\n##########################################################################################";
+	cout << endl << "\n\t\t\tREMOCAO DE CLIENTES\n";
+	//mostra os nomes dos clientes
+	for (int i = 0; i < cliente.size(); i++) {
+		cout << i + 1 << ")" << cliente[i].getNome() << ";" << endl;
+	}
+	cout << cliente.size() + 1 << ")Voltar;\n";
+	cout << "\nIntroduza a opcao referente ao cliente que pretende remover: ";
+	cin >> indice;
+	//deteta se houve erro
+	while (indice < 1 || indice > cliente.size() + 1 || cin.fail()) {
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cerr << "\nOpcao invalida!Tente novamente: ";
+		cin >> indice;
+	}
+	//ve se quer voltar
+	if (indice == cliente.size() + 1) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		clientemenu(cliente, pacote, imp);
+		return;
+	}
+	cin.ignore(1000, '\n');
+	cliente.erase(cliente.begin() + (indice - 1));
+	cout << "\n\nCLIENTE REMOVIDO COM SUCESSO!";
+}
+
+//---------------------PACOTES-------------------------------
+
+//cria novos pacotes
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes que e alterado
+//@param3 string com informacao do ultimo a ser criado que vai ser alterado
+void cripac(vector <Client> cliente, vector <Pacotes> & pacote, string & imp) {
+	char cont;
+	string aux, data;    //auxiliar a leitura de dados
+	Pacotes novo;
+	string ano, mes, dia;      //auxiliar a leitura de dados
+	vector <string> codigos;
+	string preco, lugdisp, lugocu, codigo, destino;     //auxiliar a leitura de dados
+	int opcao;
+	bool invalid = true, pres, voltar = false;
+	cout << "\n\n##########################################################################################";
+	cout << endl << endl << "\t\t\tCRIACAO DE PACOTES\n\n";
+	//verifica se ja existe algum pacote com aqule codigo
+	while (invalid) {
+		cout << "Introduza o codigo do pacote(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+		if (cin.fail()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		else if (validnum(aux, codigo) == false)
+			cerr << "\nErro no campo codigo!Tente novamente!\n";
+		else {
+			codigos = codvector(pacote);
+			pres = (invector(codigos, codigo) || invector(codigos, "-" + codigo)); //verifica se ja a algum pacote com aquele codigo
+				//se nao cria o codigo e coloca a string que guarda a informacao do ultimo pacote a ser criado com aquele valor
+			if (pres == false)
+				invalid = false;
+			//se sim informa utilizador
+			else
+				cerr << "\nJa existe um pacote com esse codigo!Tente novamente!\n";
+		}
+	}
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotemenu(cliente, pacote, imp);
+		return;
+	}
+	invalid = true;
+	cout << "\nIntroduza o destino(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (validdest(normalise(aux), destino) == false || cin.fail()) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo destino!Tente novamente!";
+		cout << "\nIntroduza o destino(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotemenu(cliente, pacote, imp);
+		return;
+	}
+	// ve se as datas inseridas foram validas
+	while (invalid) {
+		cout << "\nIntroduza a nova data de partida no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, data);
+		while (cin.fail() || !validdigit(data, ano, mes, dia)) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cerr << "\nErro no campo data! Tente novamente!\n";
+			cout << "Introduza a data de partida no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, data);
+		}
+		//ve se quer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotemenu(cliente, pacote, imp);
+			return;
+		}
+		//se inserirmos 6  fica 06
+		if (mes.length() == 1)
+			mes = "0" + mes;
+		if (dia.length() == 1)
+			dia = "0" + dia;
+		//verifica se a data existe
+		if (validdate(stoi(ano), stoi(mes), stoi(dia)) == false) {
+			invalid = true;
+			cerr << "\nData Invalida!Tente novamente!\n";
+		}
+		else
+			invalid = false;
+	}
+	//adiciona as datas
+	novo.setAnoInicio(ano);
+	novo.setMesInicio(mes);
+	novo.setDiaInicio(dia);
+	invalid = true;
+	//ve se as datas sao validas
+	while (invalid) {
+		cout << "\nIntroduza a nova data de chegada no formato ano/mes/dia: ";
+		getline(cin, data);
+		while (cin.fail() || !validdigit(data, ano, mes, dia)) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cerr << "\nErro no campo data! Tente novamente!\n";
+			cout << "Introduza a data de chegada no formato ano/mes/dia: ";
+			getline(cin, data);
+		}
+		//ve se quer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotemenu(cliente, pacote, imp);
+			return;
+		}
+		//se inserirmos 6  fica 06
+		if (mes.length() == 1)
+			mes = "0" + mes;
+		if (dia.length() == 1)
+			dia = "0" + dia;
+		//verifica se a data existe
+		if (validdate(stoi(ano), stoi(mes), stoi(dia)) == false) {
+			invalid = true;
+			cerr << "\nData Invalida!Tente novamente!\n";
+		}
+		else if (stoi(ano + mes + dia) < stoi(novo.getAnoInicio() + novo.getMesInicio() + novo.getDiaInicio())) {
+			invalid = true;
+			cerr << "\nData Invalida!Tente novamente!\n";
+		}
+		else
+			invalid = false;
+	}
+	//adiciona as datas
+	novo.setAnoFim(ano);
+	novo.setMesFim(mes);
+	novo.setDiaFim(dia);
+	cout << "\nIntroduza o preco(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (validnum(aux, preco) == false || cin.fail()) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo preco!Tente novamente";
+		cout << "\nIntroduza o preco(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotemenu(cliente, pacote, imp);
+		return;
+	}
+	cout << "\nIntroduza a lotacao de lugares(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro
+	while (validnum(aux, lugdisp) == false || cin.fail()) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro no campo lotacao de lugares!Tente novamente";
+		cout << "\nIntroduza a lotacao de lugares(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotemenu(cliente, pacote, imp);
+		return;
+	}
+	cout << "\nIntroduza o numero de lugares ocupados(CTRL + Z para voltar ao menu anterior): ";
+	getline(cin, aux);
+	//verifica se ocorreu algum erro ou se os lugares ocupados sao mais que a lotacao que definimos
+	while (validnum(aux, lugocu) == false || stoi(lugocu) > stoi(ovo.getLugares()) || cin.fail()) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		else if (validnum(aux, lugocu) == false) {
+			cerr << "\nErro no campo lugares ocupados!Tente novamente";
+			cout << "\nIntroduza o numero de lugares ocupados(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+		}
+		else {
+			cerr << "\nNao e possivel os lugares ocupados serem mais do que a lotacao e lugares atual, " << novo.getLugares() << "!Tente novamente!";
+			cout << "\nIntroduza o numero de lugares ocupados(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+		}
+
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotemenu(cliente, pacote, imp);
+		return;
+	}
+	//adiciona o pacote
+	novo.setId(codigo);
+	imp = novo.getId();
+	novo.setDestino(destino);
+	novo.setPreco(preco);
+	novo.setLugares(lugdisp);
+	novo.setLugaresV(lugocu);
+	pacote.push_back(novo);
+	cout << "n\nPACOTE CRIADO COM SUCESSO!";
+}
+
+//altera pacotes
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes que e alterado
+//@param3 string com informacao do ultimo a ser criado
+void altpac(vector <Client> cliente, vector <Pacotes> & pacote, string & imp)
+{
+	char cont;
+	int indice, opcao;
+	bool invalid = true, pres, voltar = false;
+	vector <string> codigos;
+	string ano, mes, dia;// auxilia a leitura de dados
+	string aux;    // auxilia a leitura de dados
+	int aux1, aux2, aux3;
+	char lixo;
+	string preco, lugdisp, lugocu, codigo, destino, data;// auxilia a leitura de dados
+	int count;
+	cout << "\n\n##########################################################################################";
+	cout << endl << "\n\t\t\tALTERACAO DE PACOTES\n";
+	//mostra todos os pacotes
+	for (int i = 0; i < pacote.size(); i++) {
+		cout << "Pacote " << i + 1 << endl << endl;
+		pacote[i].showPacote();
+		cout << endl << endl;
+	}
+	cout << "Introduza a opcao referente ao numero do pacote que pretende alterar(CTRL + Z para voltar ao menu anterior): ";
+	cin >> indice;
+	//deteta se a opcao e valida
+	while (cin.fail() || indice > pacote.size() || indice < 1) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "\nOpcao Invalida!Tente novamente(CTRL + Z para voltar ao menu anterior): ";
+		cin >> indice;
+	}
+	//ve se quer voltar
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotemenu(cliente, pacote, imp);
+		return;
+	}
+	cin.ignore(1000, '\n');
+	cout << endl << endl;
+	//pergunta qual e a opcao
+	cout << "\n\nPARAMETRO A ALTERAR\n\n1)Codigo;\n2)Destino;\n3)Data de Inicio;\n4)Data de Fim;\n5)Preco;\n6)Lotacao dos lugares;\n7)Lugares ocupados;\n8)Voltar;\n";
+	cout << "\n\nIntroduza a sua opcao: ";
+	cin >> opcao;
+	//verifica se e valida
+	while (cin.fail() || opcao < 1 || opcao > 8) {
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "\nOpcao Invalida!Tente novamente(CTRL + Z para voltar ao menu anterior): ";
+		cin >> opcao;
+	}
+	//ve se quer voltar
+	if (opcao == 8) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotemenu(cliente, pacote, imp);
+		return;
+	}
+	cin.ignore(1000, '\n');
+	cout << endl << endl;
+	switch (opcao) {
+	case 1:
+		//verifica se a algum pacote com aquele codigo
+		while (invalid) {
+			cout << "Introduza o codigo do pacote(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+			while (lecopac(aux, codigo) == false || cin.fail()) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo codigo!Tente novamente!";
+				cout << "\nIntroduza o codigo do pacote(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				pacotemenu(cliente, pacote, imp);
+				return;
+			}
+			codigos = codvector(pacote);
+			pres = (invector(codigos, codigo) || invector(codigos, "-" + codigo));
+			if (pres == false) {
+				if (pacote[indice - 1].getId() == imp) {
+					pacote[indice - 1].setId(codigo);
+					imp = pacote[indice - 1].getId();
+				}
+				else
+					pacote[indice - 1].setId(codigo);
+				invalid = false;
+			}
+			else {
+				cerr << "\nJa existe um pacote com esse codigo!";
+			}
+		}
+		break;
+	case 2:
+		cout << "Introduza o novo destino(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+		//verifica se ocorreu algum erro
+		while (validdest(normalise(aux), destino) == false || cin.fail()) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cerr << "\nErro no campo destino!Tente novamente!";
+			cout << "\nIntroduza o destino(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+		}
+		//ve se quer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotemenu(cliente, pacote, imp);
+			return;
+		}
+		pacote[indice - 1].setDestino(destino);
+		break;
+	case 3:
+		//verifica se a nova data e valida
+		while (invalid) {
+			cout << "Introduza a data de inicio no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, data);
+			while (cin.fail() || !validdigit(data, ano, mes, dia)) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "Erro no campo data!Tente novamente!";
+				cout << "\nIntroduza a data de partida no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, data);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				pacotemenu(cliente, pacote, imp);
+				return;
+			}
+			//caso o utlizador tenha colocado por exmeplo 7 isto cloca 07
+			if (mes.length() == 1)
+				mes = "0" + mes;
+			if (dia.length() == 1)
+				dia = "0" + dia;
+			//verifica se a data existe
+			if (validdate(stoi(ano), stoi(mes), stoi(dia)) == false) {
+				invalid = true;
+				cerr << "\nData Invalida!Tente novamente!\n";
+			}
+			else if (stoi(ano + mes + dia) > stoi(pacote[indice - 1].getAnoFim() + pacote[indice - 1].getMesFim() + pacote[indice - 1].getDiaFim())) {
+				invalid = true;
+				cerr << "\nData Invalida!Tente novamente!\n";
+			}
+			else
+				invalid = false;
+		}
+		pacote[indice - 1].setAnoInicio(ano);
+		pacote[indice - 1].setMesInicio(mes);
+		pacote[indice - 1].setDiaInicio(dia);
+		break;
+	case 4:
+		//verifica se a nova data e valida
+		while (invalid) {
+			cout << "Introduza a data de chegada no formato ano/mes/dia: ";
+			getline(cin, data);
+			while (cin.fail() || !validdigit(data, ano, mes, dia)) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "\nErro no campo data! Tente novamente!\n";
+				cout << "Introduza a data de chegada no formato ano/mes/dia: ";
+				getline(cin, data);
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				pacotemenu(cliente, pacote, imp);
+				return;
+			}
+			//caso o utlizador tenha colocado por exmeplo 7 isto cloca 07
+			if (mes.length() == 1)
+				mes = "0" + mes;
+			if (dia.length() == 1)
+				dia = "0" + dia;
+			//verifica se a data existe
+			if (validdate(stoi(ano), stoi(mes), stoi(dia)) == false) {
+				invalid = true;
+				cerr << "\nData Invalida!Tente novamente!\n";
+			}
+			//verifica se a data de chegada e antes da de partida
+			else if (stoi(ano + mes + dia) < stoi(pacote[indice - 1].getAnoInicio() + pacote[indice - 1].getMesInicio() + pacote[indice - 1].getDiaInicio())) {
+				invalid = true;
+				cerr << "\nData Invalida!Tente novamente!\n";
+			}
+			else
+				invalid = false;
+		}
+		pacote[indice - 1].setAnoFim(ano);
+		pacote[indice - 1].setMesFim(mes);
+		pacote[indice - 1].setDiaFim(dia);
+		break;
+	case 5:
+		cout << "Introduza o preco(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+		//verifica se ocorreu algum erro
+		while (validnum(aux, preco) == false || cin.fail()) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cerr << "\nErro no campo preco!Tente novamente";
+			cout << "\nIntroduza o preco(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+		}
+		//ve se quer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotemenu(cliente, pacote, imp);
+			return;
+		}
+		pacote[indice - 1].setPreco(preco);
+		break;
+	case 6:
+		cout << "Introduza a lotacao de lugares(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+		//verifica se ocorreu algum erro ou se os lugares ocupados eram mais que a lotacao de luagres
+		while (validnum(aux, lugdisp) == false || stoi(lugdisp) < stoi(pacote[indice - 1].getLugaresV()) || cin.fail()) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			if (validnum(aux, lugdisp) == false) {
+				cerr << "\nErro no campo lotacao de lugares!Tente novamente!";
+				cout << "\nIntroduza a lotacao de lugares(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			else {
+				cerr << "\nNao pode haver menor lotacao de lugares do que numero lugares ocupados atual, " << pacote[indice - 1].getLugaresV() << "!Tente novamente!";
+				cout << "\nIntroduza a lotacao de lugares(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+		}
+		//ve se quer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotemenu(cliente, pacote, imp);
+			return;
+		}
+		pacote[indice - 1].setLugares(lugdisp);
+		break;
+	case 7:
+		cout << "Introduza o numero de lugares ocupados(CTRL + Z para voltar ao menu anterior): ";
+		getline(cin, aux);
+		//verifica se ocorreu algum erro ou se os lugares ocupados eram mais que a lotacao de lugares
+		while (validnum(aux, lugocu) == false || stoi(lugocu) > stoi(pacote[indice - 1].getLugares()) || cin.fail()) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			if (validnum(aux, lugocu) == false) {
+				cerr << "\nErro no campo lugares ocupados!Tente novamente!";
+				cout << "\nIntroduza o numero de lugares ocupados(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+			else {
+				cerr << "\nNao podem haver mais lugares ocupados do que a lotacao de lugares atual, " << pacote[indice - 1].getLugares() << "!Tente novamente!";
+				cout << "\nIntroduza o numero de lugares ocupados(CTRL + Z para voltar ao menu anterior): ";
+				getline(cin, aux);
+			}
+		}
+		//ve se uqer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotemenu(cliente, pacote, imp);
+			return;
+		}
+		pacote[indice - 1].setLugaresV(lugocu);
+		break;
+	default:
+		cout << " ";
+	}
+	cout << "\n\nPACOTE ALTERADO COM SUCESSO!";
+}
+
+//remove um dos pacotes
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void inpac(vector <Client> cliente, vector <Pacotes> & pacote, string & imp) {
+	char cont;
+	int indice;
+	string codigo;
+	bool voltar = false;
+	vector <Pacotes> disponiveis;
+	cout << "\n\n##########################################################################################";
+	cout << endl << "\n\t\t\tINDISPONIBILIDADE DE PACOTES\n\n";
+	//mostra os pacotes que estao disponiveis
+	disponiveis = dispac(pacote);
+	for (int i = 0; i < disponiveis.size(); i++) {
+		cout << "Pacote " << i + 1 << endl << endl;
+		disponiveis[i].showPacote();
+		cout << endl << endl;
+	}
+	cout << "Introduza a opcao referente ao codigo que pretende alterar(CTRL + Z para voltar ao menu anterior): ";
+	cin >> indice;
+	//deteta se a opao e valida
+	while (cin.fail() || indice < 1 || indice > disponiveis.size() || cin.fail()) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		else {
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "\nOpcao Invalida!Tente novamente(CTRL + Z para voltar ao menu anterior): ";
+			cin >> indice;
+		}
+	}
+	//ve se quer voltar atras
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotemenu(cliente, pacote, imp);
+		return;
+	}
+	codigo = disponiveis[indice - 1].getId();
+	//codigo do pacote a alterar
+	indice = indexcod(codvector(pacote), codigo);
+	if (imp == pacote[indice].getId())                     //se o ultimo a ser criado foi esse altera o numero no topo tambem
+		imp = "-" + imp;
+	pacote[indice].setId("-" + pacote[indice].getId());
+	cin.ignore(1000, '\n');
+	cout << "\n\nOPERACAO CONCLUIDA COM SUCESSO!";
+}
+
+//comprar um pacote
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void compac(vector <Client> & cliente, vector <Pacotes> & pacote, string imp) {
+	string aux;
+	vector <string> codigos;
+	int indicecli, indicepac, sobra; //indicecli: indice relativo ao cliente; indicepac: relativo ao pacote
+	string verif;
+	bool cont, voltar = false;
+	cout << "\n\n##########################################################################################";
+	cout << "\n\n\t\t\tCOMPRA DE PACOTES";
+	//pretende saber se ja e ou nao cliente
+	cout << endl << endl << "Ja e cliente(s/n)(CTRL + Z para voltar ao menu anterior)? ";
+	cin >> aux;
+	//verifica a opcao
+	while (normalise(aux) != "s" && normalise(aux) != "n" || cin.fail()) {
+		if (cin.eof()) {
+			cin.clear();
+			voltar = true;
+			break;
+		}
+		cerr << "\nErro! Por favor digite uma das opcoes indicadas(s/n)(CTRL + Z para voltar ao menu anterior): ";
+		cin >> aux;
+	}
+	cin.ignore(1000, '\n');
+	//verifica se quer voltara atras
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotemenu(cliente, pacote, imp);
+		return;
+	}
+	//se nao chama a funcao pra criar cliente 
+	if (aux == "n") {
+		cricli(cliente, pacote, imp);
+		indicecli = cliente.size() - 1; //indice relativo ao novo cliente pois foi o ultimo a ser criado
+	}
+	//se sim
+	else {
+		//mostra os cliente existentes
+		mostranomes(cliente);
+		cout << "\nQual cliente e voce? Digite o numero correspondente a sua opcao(CTRL + Z para voltar ao menu anterior): ";
+		cin >> indicecli;
+		//deteta se a opcao e valida
+		while (indicecli < 1 || indicecli > cliente.size() || cin.fail()) {
+			if (cin.eof())
+			{
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "\nOpcao Invalida! Tente novamente(CTRL + Z para voltar ao menu anterior): ";
+			cin >> indicecli;
+		}
+		cin.ignore(1000, '\n');
+		indicecli = indicecli - 1;  //indice relativo ao cliente detetado a  partir da opcao do utiliador
+	}
+	//verifica se quer voltar atras
+	if (voltar) {
+		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+		pacotemenu(cliente, pacote, imp);
+		return;
+	}
+	//mostra os pacotes disponiveis ao cliente
+	disp(cliente, pacote, imp);
+	cout << "\n\n##########################################################################";
+	cout << "\n\n\t\t\tDE VOLTA A COMPRA DE PACOTES\n\n";
+	//vetor dos codigos
+	codigos = codvector(pacote);
+	do {
+		cout << "Introduza o numero do codigo do pacote referente a sua opcao(CTRL + Z para voltar ao menu anterior): ";
+		cin >> verif;
+		//verifica se a opcao e valida se de facto o codigo que inseriu existe 
+		while (!invector(codigos, verif) || cin.fail()) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cout << "Nao ha nenhum pacote com esse codigo!Tente novamente(CTRL + Z para voltar ao menu anterior): ";
+			cin >> verif;
+		}
+		//ve se quer voltar atras
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			pacotemenu(cliente, pacote, imp);
+			return;
+		}
+		cin.ignore(1000, '\n');
+		indicepac = indexcod(codigos, verif);    //vai ver qual e o indice do pacote no meio de todos os codigos disponiveis e nao disponiveis
+		sobra = stoi(pacote[indicepac].getLugares()) - stoi(pacote[indicepac].getLugaresV());    //ve quantos lugares sobram
+		//verifica se o cliente tem um agregado familiar superior ao numero de lugares disponiveis
+		// se sim faz isto
+		if (sobra < stoi(cliente[indicecli].getAgregFamiliar())) {
+			cout << "\nApenas existem " << sobra << " lugares disponiveis neste pacote!\nPrentende apenas comprar estes lugares(s/n)(CTRL + Z para voltar ao menu anterior)? ";
+			cin >> aux;
+			//deteta se a opcao e valida
+			while (normalise(aux) != "s" && normalise(aux) != "n" || cin.fail()) {
+				cerr << "\nErro! Por favor digite uma das opcoes indicadas(s/n)(CTRL + Z para voltar ao menu anterior): ";
+				cin >> aux;
+			}
+			//ve se quer voltar atras
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				pacotemenu(cliente, pacote, imp);
+				return;
+			}
+			//Se ele nao quiser comprar pergunta se pretende abandonar a opcao de compra
+			if (normalise(aux) == "n") {
+				cout << "\nPretende abandonar a opcao de compra(s/n)(CTRL + Z para voltar ao menu anterior)? ";
+				cin >> aux;
+				while (normalise(aux) != "s" && normalise(aux) != "n" || cin.fail()) {
+					if (cin.eof()) {
+						cin.clear();
+						voltar = true;
+						break;
+					}
+					cerr << "\nErro! Por favor digite uma das opcoes indicadas(s/n)(CTRL + Z para voltar ao menu anterior): ";
+					cin >> aux;
+				}
+				//ve se quer voltar
+				if (voltar) {
+					cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+					pacotemenu(cliente, pacote, imp);
+					return;
+				}
+				if (aux == "n")
+					cont = false;
+				else {
+					cont = true;
+					break;
+				}
+			}
+			// Se quiser faz as alteracoes necessarias nos pacotes e clientes
+			else {
+				// se ele nao tiver nenhum adiciona o que comprou a lista de pacotes
+				if (normalise(cliente[indicecli].getPacotAdquiridos()) == "-")
+					cliente[indicecli].setPacotAdquiridos(pacote[indicepac].getId());
+				//se tiver adiciona aos anteriores
+				else if (!invector(tovector(cliente[indicecli].getPacotAdquiridos()), pacote[indicepac].getId()))
+					cliente[indicecli].setPacotAdquiridos(cliente[indicecli].getPacotAdquiridos() + " ; " + pacote[indicepac].getId());
+				//se ele acabar por esgotar o pacote poe o "-" no codigo deste e altera os lugares ocupados
+				if (stoi(pacote[indicepac].getLugares()) <= (stoi(pacote[indicepac].getLugaresV()) + stoi(cliente[indicecli].getAgregFamiliar()))) {
+					pacote[indicepac].setId("-" + pacote[indicepac].getId());
+					pacote[indicepac].setLugaresV(pacote[indicepac].getLugares());
+				}
+				//se nao esgotar apenas altera os luagres ocupados
+				else
+					pacote[indicepac].setLugaresV(to_string(stoi(pacote[indicepac].getLugaresV()) + stoi(cliente[indicecli].getAgregFamiliar())));
+				cont = true;
+				cliente[indicecli].setCapGasto(to_string(stoi(cliente[indicecli].getAgregFamiliar()) * stoi(pacote[indicepac].getPreco())));   //altera o capital gasto
+			}
+		}
+		//se nao tiver um agregado familiar superior faz isto
+		else {
+			cout << "\nTem a certeza que pretende comprar o pacote com o codigo " << pacote[indicepac].getId() << "(s/n)(CTRL + Z para voltar ao menu anterior)? ";
+			cin >> aux;
+			//deteta se a opcao e valida
+			while (normalise(aux) != "s" && normalise(aux) != "n" || cin.fail()) {
+				if (cin.eof()) {
+					cin.clear();
+					voltar = true;
+					break;
+				}
+				cerr << "Erro! Por favor digite uma das opcoes indicadas(s/n)(CTRL + Z para voltar ao menu anterior): ";
+				cin >> aux;
+			}
+			//ve se quer voltar
+			if (voltar) {
+				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+				pacotemenu(cliente, pacote, imp);
+				return;
+			}
+			//se afinal nao quiser comprar faz isto
+			if (aux == "n")
+				cont = false;
+			//se quiser
+			else {
+				//Se nao tiver nenhum pacote aquirido mete aquele codigo na lista de pacotes adquiridos
+				if (normalise(cliente[indicecli].getPacotAdquiridos()) == "-")
+					cliente[indicecli].setPacotAdquiridos(pacote[indicepac].getId());
+				//se tiver apenas adiciona a lista
+				else if (!invector(tovector(cliente[indicecli].getPacotAdquiridos()), pacote[indicepac].getId()))
+					cliente[indicecli].setPacotAdquiridos(cliente[indicecli].getPacotAdquiridos() + " ; " + pacote[indicepac].getId());
+				//se esgotar o pacote poe "-" e altera os lugares ocupados
+				if (stoi(pacote[indicepac].getLugares()) <= (stoi(pacote[indicepac].getLugares()) + stoi(cliente[indicecli].getAgregFamiliar()))) {
+					pacote[indicepac].setId("-" + pacote[indicepac].getId());
+					pacote[indicepac].setLugaresV(pacote[indicepac].getLugares());
+				}
+				//se nao esgotar apenas altera os lugares ocupados
+				else
+					pacote[indicepac].setLugaresV(to_string(stoi(pacote[indicepac].getLugaresV()) + stoi(cliente[indicecli].getAgregFamiliar())));
+				cont = true;
+				cliente[indicecli].setCapGasto(to_string(stoi(cliente[indicecli].getAgregFamiliar()) * stoi(pacote[indicepac].getPreco())));   //altera o capital gasto
+			}
+		}
+	} while (!cont);
+	cin.ignore(1000, '\n');
+	cout << "\n\nCOMPRA CONCLUIDA COM SUCESSO!";
+}
+
+
+//-----------------------MENUS------------------------------
+
+//Mostra menu com informçao dos pacotes disponiveis
+//@param1 vetor com informaçao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void pacotdisp(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	int opcao;
+	cout << "\n\n##########################################################################################";
+	cout << "\n\n\t\t\tPACOTES DISPONIVEIS\n\n1)Todos os Disponiveis;\n2)Destino Especifico;\n3)Entre duas datas;\n4)Destino Especifico entre duas datas;\n5)Voltar;";
+	cout << "\n\nDigite o numero correspondente a sua opcao: ";
+	cin >> opcao;
+	verificarOpcoes(opcao, 5);
+	cin.ignore(1000, '\n');
+	switch (opcao) {
+	case 1:
+		disp(cliente, pacote, imp);
+		break;
+	case 2:
+		destesp(cliente, pacote, imp);
+		break;
+	case 3:
+		dudat(cliente, pacote, imp);
+		break;
+	case 4:
+		destespdudat(cliente, pacote, imp);
+		break;
+	case 5:
+		estatisticasmenu(cliente, pacote, imp);
+		break;
+	default:
+		cout << " ";
+	}
+
+}
+
+//Mostra menu com informaçao dos pacotes vendidos
+//@param1 vetor com informaçao dos clientes
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void vendinf(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	int opcao;
+	cout << "\n\n##########################################################################################";
+	cout << "\n\n\t\t\tPACOTES VENDIDOS-INFORMACOES\n\n1)Relativos a um cliente;\n2)Relativos a todos os clientes;\n3)Voltar\n\n";
+	cout << "Digite o numero correspondente a sua opcao: ";
+	cin >> opcao;
+	verificarOpcoes(opcao, 3);
+	cout << endl;
+	cin.ignore(1000, '\n');
+	switch (opcao) {
+	case 1:
+		clivend(cliente, pacote, imp);
+		break;
+	case 2:
+		todvend(cliente, pacote, imp);
+		break;
+	case 3:
+		estatisticasmenu(cliente, pacote, imp);
+		break;
+	default:
+		cout << " ";
+	}
+}
+
+//Mostra o Menu do Cliente
+//@param1 vetor com informaçao sobre os clientes que e alterado
+//@param2 vetor com informacao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void clientemenu(vector <Client> & cliente, vector <Pacotes> pacote, string imp) {
+	int opcao;
+	cout << "\n\n##########################################################################################";
+	cout << "\n\n\t\t\tGESTAO DE CLIENTES\n\n1)Criar;\n2)Alterar;\n3)Remover;\n4)Voltar;";
+	cout << "\n\nDigite o numero correspondente a sua opcao: ";
+	cin >> opcao;
+	verificarOpcoes(opcao, 4);
+	cin.ignore(1000, '\n');
+	switch (opcao) {
+	case 1:
+		cricli(cliente, pacote, imp);
+		break;
+	case 2:
+		altcli(cliente, pacote, imp);
+		break;
+	case 3:
+		remcli(cliente, pacote, imp);
+		break;
+	case 4:
+		menu(cliente, pacote, imp);
+		break;
+	default:
+		cout << " ";
+	}
+
+}
+
+//Mostra o menu dos pacotes
+//@param1 vetor com informacao dos clientes
+//@param2 vetor com informaçao dos pacotes que e alterado
+//@param3 string que diz qual foi o ultimo a ser criado
+void pacotemenu(vector <Client> & cliente, vector <Pacotes> & pacote, string & imp) {
+	int opcao;
+	cout << "\n\n##########################################################################################";
+	cout << "\n\n\t\t\tGESTAO DE PACOTES\n\n1)Criar;\n2)Alterar;\n3)Colocar Indisponivel;\n4)Compra de Pacotes;\n5)Voltar;";
+	cout << "\n\nDigite o numero correspondente a sua opcao: ";
+	cin >> opcao;
+	verificarOpcoes(opcao, 5);
+	cin.ignore(1000, '\n');
+	switch (opcao) {
+	case 1:
+		cripac(cliente, pacote, imp);
+		break;
+	case 2:
+		altpac(cliente, pacote, imp);
+		break;
+	case 3:
+		inpac(cliente, pacote, imp);
+		break;
+	case 4:
+		compac(cliente, pacote, imp);
+		break;
+	case 5:
+		menu(cliente, pacote, imp);
+		break;
+	default:
+		cout << " ";
+	}
+
+}
+
+//Mostra o Menu para visualizaçao de dados
+//@param1 vetor com informaçao dos clientes
+//@param2 vetor com informaçao dos pacotes
+//@param3 string com informacao do ultimo a ser criado
+void estatisticasmenu(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
+	int opcao;
+	cout << "\n\n##########################################################################################";
+	cout << "\n\n\t\t\tMENU DE ESTATISTICAS\n\n1)Informacao sobre um cliente especifico;\n2)Informacao sobre todos os clientes;\n3)Informacao sobre os Pacotes Disponiveis;\n4)Informacao sobre quantos pacotes foram vendidos e o lucro;\n5)Informacao sobre pacotes vendidos;\n6)Informacao sobre qual falta visitar dos mais vistados;\n7)Voltar;";
+	cout << "\n\nDigite o numero correspondente a sua opcao: ";
+	cin >> opcao;
+	verificarOpcoes(opcao, 7);
+	cin.ignore(1000, '\n');
+	switch (opcao) {
+	case 1:
+		clienteesp(cliente, pacote, imp);
+		break;
+	case 2:
+		clienteger(cliente, pacote, imp);
+		break;
+	case 3:
+		pacotdisp(cliente, pacote, imp);
+		break;
+	case 4:
+		vendluc(cliente, pacote, imp);
+		break;
+	case 5:
+		vendinf(cliente, pacote, imp);
+		break;
+	case 6:
+		pacotesRecomendadosAClientes(cliente, pacote, imp);
+		break;
+	case 7:
+		menu(cliente, pacote, imp);
+		break;
+	default:
+		cout << " ";
+
+	}
+
+}
+
+//Mostra o Menu Principal
+//@param1 vetor com informaçao dos clientes que pode ser alterado
+//@param2 vetor com informaçao dos pacotes que pode ser alterado
+//@param3 string com informacao do ultimo a ser criado
+void menu(vector <Client> & cliente, vector <Pacotes> & pacote, string & imp) {
+	int opcao;
+	cout << "\n\n##########################################################################################";
+	cout << "\n\n\t\t\tMENU PRINCIPAL\n\n1)Gestao de Clientes;\n2)Gestao de Pacotes Turisticos;\n3)Estatisticas;\n4)Sair;";
+	cout << "\n\nDigite o numero correspondente a sua opcao: ";
+	cin >> opcao;
+	verificarOpcoes(opcao, 4);
+	cin.ignore(1000, '\n');
+	//mostra o menu
+	switch (opcao) {
+	case 1:
+		clientemenu(cliente, pacote, imp);
+		break;
+	case 2:
+		pacotemenu(cliente, pacote, imp);
+		break;
+	case 3:
+		estatisticasmenu(cliente, pacote, imp);
+		break;
+	case 4:
+		acabar(cliente, pacote, imp);
+		exit(1);
+	default:
+		cout << " ";
+	}
+}
+
+//-----------------------------LER FICHEIROS------------------------------------------
+
+//le os parametros que constituem o ficheira agencia para um vetor de strings
+//@param1 vetor que vai acrescentar a informaçao da agencia
+void leagencia(vector <Agency> & parametros) {
+	string aux; //auxilia a leitura de dados
+	Agency agencia;
+	ifstream entrada;
+	string fichagencia;  //variavel com o nome do ficheiro relativo a agencia
+	string nif, rua, porta, andar, localidade, copostal; //auxilia a leitura de dados
+	cout << "Bem-Vindo! Introduza o nome do ficheiro(com extensao) associado a agencia: ";
+	getline(cin, fichagencia);
+	entrada.open(normalise(fichagencia));
+	//verifica se existe algum ficheiro com aquele nome
+	while (normalise(fichagencia) == "" || cin.fail() || !entrada.is_open()) {
+		if (cin.eof())
+			cin.clear();
+		cerr << "\nNao existe nenhum ficheiro com esse nome!\n";
+		cout << "Introduza o nome do ficheiro(com extensao) associado a agencia: ";
+		getline(cin, fichagencia);
+		entrada.open(normalise(fichagencia));
+	}
+	//le a informacao para o vetor agencia
+	getline(entrada, aux);
+	//verifica se o nome da agencia e valido
+	if (validname(aux) == false) {
+		cerr << "\nErro ao tentar ler do ficheiro " << fichagencia << " para o campo nome da agencia!"
+			<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+		exit(1);
+	}
+	agencia.setNome(aux);
+	getline(entrada, aux);
+	//verifica se o nif e valido
+	if (validnum(aux, nif) == false || nif.length() != 9) {
+		cerr << "\nErro ao tentar ler do ficheiro " << fichagencia << " para o campo nif da agencia!"
+			<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+		exit(1);
+	}
+	agencia.setNif(aux);
+	getline(entrada, aux);
+	agencia.setUrl(aux);
+	getline(entrada, aux, '/');
+	//verifica se houve algum erro ao ler do ficehiro a rua
+	if (validname(aux) == false) {
+		cerr << "\nErro ao tentar do ficheiro " << fichagencia << " para o campo rua!"
+			<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+		exit(1);
+	}
+	espaint(aux, rua);  //normaliza tira espacos a mais do meio e coloca em letra grande o necessario
+	agencia.setAgenciaRua(rua);    //altera
+	getline(entrada, aux, '/');
+	//verifica se houve algum erro ao ler do ficehiro a porta
+	if (validnum(aux, porta) == false) {
+		cerr << "\nErro ao tentar do ficheiro " << fichagencia << " para o campo porta!"
+			<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+		exit(1);
+	}
+	agencia.setAgenciaPorta(porta);   //altera
+	getline(entrada, aux, '/');
+	//verifica se houve algum erro ao ler do ficehiro o andar
+	if (validandar(normalise(aux), andar) == false) {
+		cerr << "\nErro ao tentar do ficheiro " << fichagencia << " para o campo andar!"
+			<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+		exit(1);
+	}
+	agencia.setAgenciaAndar(andar);    //altera
+	getline(entrada, aux, '/');
+	//verifica se houve algum erro ao ler do ficehiro codigo postal
+	if (validcodpostal(aux, copostal) == false) {
+		cerr << "\nErro ao tentar do ficheiro " << fichagencia << " para o campo codigo postal!"
+			<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+		exit(1);
+	}
+	agencia.setAgenciaCPostal(copostal);   //altera
+	getline(entrada, aux);
+	//verifica se houve algum erro ao ler do ficehiro a localidade
+	if (validname(aux) == false) {
+		cerr << "\nErro ao tentar do ficheiro " << fichagencia << " para o campo rua!"
+			<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+		exit(1);
+	}
+	espaint(aux, localidade);   //normaliza tira espacos a mais do meio e coloca em letra grande o necessario
+	agencia.setAgenciaLocalidade(localidade);   //altera
+	getline(entrada, aux);
+	agencia.setFichCliente(aux);
+	getline(entrada, aux);
+	agencia.setFichPacotes(aux);
+	parametros.push_back(agencia);
+	entrada.close();
+}
+
+//le os parametros que constituem o ficheiro dos pacotes para um vetor de strings
+//@param1 contem o nome do ficheiro
+//@param2 vetor que vai acrescentar a informaçao dos pacotes
+//@param3 ultimo pacote a ser criado
+void lepacotes(string ficheiro, vector <Pacotes> & parametros, string & ultpac) {
+	string lixo;   //serve para "meter" os : presentes para separar os pacotes
+	Pacotes pacotes;
+	int cont = 0;
+	string aux, aux1, aux2, codigo, preco, lugocu, lugdisp, anoin, mesin, diain, anoche, mesche, diache, destino; //auxilia a leitura dos dados
+	ifstream entrada;
+	entrada.open(ficheiro);
+	getline(entrada, aux);
+	//verifica se houve algum erro com o codigo do ultimo pacote a ser criado ao ler do ficheiro
+	if (lecopac(aux, ultpac) == false) {
+		cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << " para o campo ultimo pacote a ser criado!"
+			<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+		exit(1);
+	}
+	//ler do ficheiro
+	while (getline(entrada, aux)) {
+		//verifica se houve algum erro com o codigo do pacote ao ler do ficheiro
+		if (lecopac(aux, codigo) == false) {
+			cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << " para o campo codigo!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//altera
+		pacotes.setId(codigo);
+		getline(entrada, aux);
+		//verifica se houve algum erro com o destino do pacote ao ler do ficheiro e ja o cloca com o formato correto
+		if (validdest(aux, destino) == false) {
+			cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << " para o campo destino!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//altera
+		pacotes.setDestino(destino);
+		getline(entrada, aux, '/');
+		getline(entrada, aux1, '/');
+		getline(entrada, aux2);
+		//verifica se houve algum erro com a data de partida do pacote ao ler do ficheiro
+		//neste primerio caso verifica se de facto esta la um numero
+		if (validnum(aux, anoin) == false || validnum(aux1, mesin) == false || validnum(aux2, diain) == false) {
+			cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << " para o campo data de inicio!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//verifica se a data existe
+		else if (validdate(stoi(anoin), stoi(mesin), stoi(diain)) == false) {
+			cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << " para o campo data de inicio!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		getline(entrada, aux, '/');
+		getline(entrada, aux1, '/');
+		getline(entrada, aux2);
+		//verifica se houve algum erro com a data de chegada do pacote ao ler do ficheiro
+		//neste primerio caso verifica se de facto esta la um numero
+		if (validnum(aux, anoche) == false || validnum(aux1, mesche) == false || validnum(aux2, diache) == false) {
+			cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << " para o campo data de chegada!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//verifica se a data existe
+		else if (validdate(stoi(anoche), stoi(mesche), stoi(diache)) == false) {
+			cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << " para o campo data de chegada!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//verifica se a data de chegada e antes da de partida
+		if (stoi(anoche + mesche + diache) < stoi(anoin + mesin + diain)) {
+			cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << "!Data de partida nao pode ser depois da data de chegada!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//altera
+		pacotes.setDataInicio(diain, mesin, anoin);
+		pacotes.setDataFim(diache, mesche, anoche);
+		getline(entrada, aux);
+		//verifica se houv algum erro ao lerdo ficheiro o preco
+		if (validnum(aux, preco) == false) {
+			cerr << "Erro ao tentar ler do ficheiro " << ficheiro << " para o campo preco!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//altera
+		pacotes.setPreco(preco);
+		getline(entrada, aux);
+		//verifica se houve algum erro com a lotacao de lugares ao ler do ficheiro
+		if (validnum(aux, lugdisp) == false) {
+			cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << " para o campo lotacao de lugares!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//altera
+		pacotes.setLugares(lugdisp);
+		getline(entrada, aux);
+		//verifica se houve algum erro ao ler do ficheiro os lugares ocupados ou se ha mais lugares ocupados do que a lotacao
+		if (validnum(aux, lugocu) == false || stoi(lugocu) > stoi(lugdisp)) {
+			cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << " para o campo lugares ocupados!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//altera
+		pacotes.setLugaresV(lugocu);
+		getline(entrada, lixo);   //coloca o "lixo"
+		parametros.push_back(pacotes);
+	}
+	entrada.close();
+}
+
+//le os parametros que constituem o ficheiro dos clientes para um vetor de strings
+//@param1 contem o nome do ficheiro
+//@param2 vetor que vai acrescentar a informaçao do cliente
+void lecliente(string ficheiro, vector <Client> & parametros) {
+	string lixo;      //serve para "meter" os : presentes para separar os pacotes
+	ifstream entrada;
+	entrada.open(ficheiro);
+	Client cliente;
+	string aux, nome, nif, agreg, rua, porta, localidade, andar, copostal, capgasto, pacadq; //auxilia a leitura de dados
+	//ler do ficheiro
+	while (getline(entrada, aux)) {
+		//verifica se houve algum erro ao ler do ficheiro
+		if (validname(aux) == false) {
+			cerr << "\nErro ao tentar ler do ficheiro " << ficheiro << " para o campo nome!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		espaint(aux, nome);     //normaliza tira espacos a mais do meio e coloca em letra grande o necessario
+		//altera
+		cliente.setNome(nome);
+		getline(entrada, aux);
+		//verifica se houve algum erro ao ler do ficheiro o nif
+		if (validnum(aux, nif) == false) {
+			cerr << "\nErro ao tentar do ficheiro " << ficheiro << " para o campo nif!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//altera
+		cliente.setNif(nif);
+		getline(entrada, aux);
+		//verifica se houve algum erro ao ler do ficheiro o agregado familiar
+		if (validnum(aux, agreg) == false) {
+			cerr << "\nErro ao tentar do ficheiro " << ficheiro << " para o campo agregado familiar!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		//altera
+		cliente.setAgregFamiliar(agreg);
+		getline(entrada, aux, '/');
+		//verifica se houve algum erro ao ler do ficehiro a rua
+		if (validname(aux) == false) {
+			cerr << "\nErro ao tentar do ficheiro " << ficheiro << " para o campo rua!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		espaint(aux, rua);  //normaliza tira espacos a mais do meio e coloca em letra grande o necessario
+		cliente.setMoradaRua(rua);    //adiciona ao vetor
+		getline(entrada, aux, '/');
+		//verifica se houve algum erro ao ler do ficehiro a porta
+		if (validnum(aux, porta) == false) {
+			cerr << "\nErro ao tentar do ficheiro " << ficheiro << " para o campo porta!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		cliente.setMoradaPorta(porta);   //altera
+		getline(entrada, aux, '/');
+		//verifica se houve algum erro ao ler do ficehiro o andar
+		if (validandar(normalise(aux), andar) == false) {
+			cerr << "\nErro ao tentar do ficheiro " << ficheiro << " para o campo andar!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		cliente.setMoradaAndar(andar);    //adiciona oa vetor
+		getline(entrada, aux, '/');
+		//verifica se houve algum erro ao ler do ficehiro codigo postal
+		if (validcodpostal(aux, copostal) == false) {
+			cerr << "\nErro ao tentar do ficheiro " << ficheiro << " para o campo codigo postal!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		cliente.setMoradaCPostal(copostal);  //altera
+		getline(entrada, aux);
+		//verifica se houve algum erro ao ler do ficehiro a localidade
+		if (validname(aux) == false) {
+			cerr << "\nErro ao tentar do ficheiro " << ficheiro << " para o campo rua!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		espaint(aux, localidade);   //normaliza tira espacos a mais do meio e coloca em letra grande o necessario
+		cliente.setMoradaLocalidade(localidade);   //altera
+		getline(entrada, aux);
+		//verifica se houve algum erro ao ler do ficehiro pacotes adquiridos
+		if (validpacadq(aux, pacadq) == false) {
+			cerr << "\nErro ao tentar do ficheiro " << ficheiro << " para o campo pacotes adquiridos!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		cliente.setPacotAdquiridos(pacadq);
+		getline(entrada, aux);
+		//verifica se houve algum erro ao ler do ficehiro capital gasto
+		if (validnum(aux, capgasto) == false) {
+			cerr << "\nErro ao tentar do ficheiro " << ficheiro << " para o campo capital gasto!"
+				<< "\nPor favor corrija o ficheiro atual e reinicie o programa!\n";
+			exit(1);
+		}
+		cliente.setCapGasto(capgasto);
+		getline(entrada, lixo);
+		parametros.push_back(cliente);
+	}
+	entrada.close();
+}
+
+//-------------------------MAIN----------------------------------------------------------
+
+int main() {
+	vector <Agency> paragencia;  //parametros da agencia
+	vector <Client> paracliente;  //parametros do cliente
+	vector <Pacotes> parapacotes;//parametros dos pacotes
+	string imp, aux;     //imp guarda a informacao do ultimo pacote a ser criado, aux e apenas para auxiliar na leitura de dados
+	bool cont = true;     //vai servir para guardar a informacao se o utilizador quer continuara ou nao com a execucao do programa
+	leagencia(paragencia);
+	lecliente(paragencia[0].getFichCliente(), paracliente);
+	lepacotes(paragencia[0].getFichPacotes(), parapacotes, imp);
+	paraclienteaux = paracliente;
+	parapacotesaux = parapacotes;
+	nomeclifi = paragencia[0].getFichCliente();
+	nomepacfi = paragencia[0].getFichPacotes();
+	impi = imp;
+	//enquanto o utilizador quiser continuar com a execucao do programa
+	while (cont) {
+		menu(paracliente, parapacotes, imp);
+		cout << "\n\n##########################################################################################";
+		cout << "\n\nQuer executar mais alguma operacao(s/n): ";
+		getline(cin, aux);
+		while ((normalise(aux) != "s" && normalise(aux) != "n") || cin.fail()) {
+			if (cin.fail())
+				cin.clear();
+			cerr << "\nErro! Por favor digite uma das opcoes indicadas(s/n): ";
+			getline(cin, aux);
+		}
+		if (aux == "n")
+			cont = false;
+	}
+	acabar(paracliente, parapacotes, imp);
+	return 0;
+}
