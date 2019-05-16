@@ -3,6 +3,8 @@
 
 using namespace std;
 
+//-----------------------CONSTRUTORES-------------------------
+
 Data::Data()
 {
 	dia = "dia desconhecido";
@@ -17,21 +19,31 @@ Data::Data(string d, string m, string a)
 	ano = a;
 }
 
+//----------------------------METODOS SET----------------------------
+
+//funcao que altera o dia
+//@param1 o dia que e para alterar
 void Data::setDia(string d)
 {
 	dia = d;
 }
 
+//funcao que altera o mes
+//@param1 o mes que e para alterar
 void Data::setMes(string m)
 {
 	mes = m;
 }
 
+//funcao que altera o ano
+//@param1 o ano que e para alterar
 void Data::setAno(string a)
 {
 	ano = a;
 }
 
+//funcao que altera a data totalmente
+//@param1 a data que e para alterar
 void Data::setData(string d, string m, string a)
 {
 	dia = d;
@@ -39,21 +51,29 @@ void Data::setData(string d, string m, string a)
 	ano = a;
 }
 
+//-----------------------METODOS GET------------------------
+
+//funcao que retorna o dia
 string Data::getDia() const
 {
 	return dia;
 }
 
+//funcao que retorna o mes
 string Data::getMes() const
 {
 	return mes;
 }
 
+//funcao que retorna o ano
 string Data::getAno() const
 {
 	return ano;
 }
 
+//---------------------------OUTRAS------------------------
+
+//funcao que mostra a data formatada
 void Data::showData() const
 {
 	cout << dia << "/" << mes << "/" << ano << endl;
