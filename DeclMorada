@@ -4,8 +4,15 @@
 
 using namespace std;
 
+//-----------------------------CONSTRUTORES------------------------
+
 Morada::Morada()
 {
+	rua = "rua desconhecida";
+	porta = "porta desconhecida";
+	andar = "andar desconhecido";
+	cpostal = "codigo postal desconhecido";
+	localidade = "localidade desconhecida";
 }
 
 Morada::Morada(string rua, string porta, string andar, string cpostal, string localidade) {
@@ -16,50 +23,73 @@ Morada::Morada(string rua, string porta, string andar, string cpostal, string lo
 	this->localidade = localidade;
 }
 
+//----------------------------METODOS SET-------------------------------
+
+//funcao que altera a rua
+//@param1 rua que e para alterar
 void Morada::setRua(string rua) {
 	this->rua = rua;
 }
 
+//funcao que altera a porta
+//@param1 porta que e para alterar
 void Morada::setPorta(string porta) {
 	this->porta = porta;
 }
 
+//funcao que altera o andar
+//@param1 andar que e para alterar
 void Morada::setAndar(string andar) {
 	this->andar = andar;
 }
 
+//funcao que altera o codigo postal
+//@param1 codigo postal que e para alterar
 void Morada::setCPostal(string cpostal) {
 	this->cpostal = cpostal;
 }
 
+//funcao que altera a localidade
+//@param1 localidade que e para alterar
 void Morada::setLocalidade(string localidade) {
 	this->localidade = localidade;
 }
 
+//------------------------METODOS GET------------------------
+
+//funcao que retorna a rua
 string Morada::getRua() const {
 	return rua;
 }
 
+//funcao que retorna a porta
 string Morada::getPorta() const {
 	return porta;
 }
 
+//funcao que retorna o andar
 string Morada::getAndar() const {
 	return andar;
 }
 
+//funcao que retorna o codigo postal
 string Morada::getCPostal() const {
 	return cpostal;
 }
 
+//funcao que retorna a localidade
 string Morada::getLocalidade() const {
 	return localidade;
 }
 
+//funcao que retorna a morada
 string Morada::getMorada() const {
 	return  rua + " / " + porta + " / " + andar + " / " + cpostal + " / " + localidade;
 }
 
+//---------------------------------OUTRAS---------------------------
+
+//funcao que mostra a morada formatada
 void Morada::showMorada() const {
 	cout << rua << " / " << porta << " / " << andar << " / " << cpostal << " / " << localidade;
 }
