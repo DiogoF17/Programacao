@@ -5,8 +5,15 @@
 
 using namespace std;
 
-Client::Client() {
+//-----------------------CONSTRUTORES----------------------------------
 
+Client::Client() {
+	nome = "nome desconhecido";
+	nif = "nif desconhecido";
+	agregfamiliar = "agregado familiar descnhecido";
+	morada = Morada();
+	pacotadquiridos = "pacotes desconehcido";
+	capgasto = "capital desconhecido";
 }
 
 Client::Client(string nome, string nif, string agregfamiliar, string rua, string porta, string andar, string cpostal, string localidade, string pacotadquiridos, string capgasto) {
@@ -17,99 +24,141 @@ Client::Client(string nome, string nif, string agregfamiliar, string rua, string
 	this->capgasto = capgasto;
 }
 
+//------------------------METODOS SET--------------------------------
+
+//funcao que altera o nome
+//@param1 nome que e para mudar
 void Client::setNome(string nome) {
 	this->nome = nome;
 }
 
+//funcao que altera o nif
+//@param1 níf que e para mudar
 void Client::setNif(string nif) {
 	this->nif = nif;
 }
 
+//funcao que altera o agregado familiar
+//@param1 agregado familiar que e para mudar
 void Client::setAgregFamiliar(string agregfamiliar) {
 	this->agregfamiliar = agregfamiliar;
 }
 
+//funcao que altera a rua
+//@param1 rua que e para mudar
 void Client::setMoradaRua(string rua) {
 	morada.setRua(rua);
 }
 
+//funcao que altera a porta
+//@param1 porta que e para mudar
 void Client::setMoradaPorta(string porta) {
 	morada.setPorta(porta);
 }
 
+//funcao que altera o andar
+//@param1 andar que e para mudar
 void Client::setMoradaAndar(string andar) {
 	morada.setAndar(andar);
 }
 
+//funcao que altera o codigo postal
+//@param1 codigo postal que e para mudar
 void Client::setMoradaCPostal(string cpostal) {
 	morada.setCPostal(cpostal);
 }
 
+//funcao que altera a localidade
+//@param1 localidade que e para mudar
 void Client::setMoradaLocalidade(string localidade) {
 	morada.setLocalidade(localidade);
 }
 
+//funcao que altera os pacotes adquiridos
+//@param1 pacotes adquiridos que e para mudar
 void Client::setPacotAdquiridos(string pacotadquiridos) {
 	this->pacotadquiridos = pacotadquiridos;
 }
 
+
+//funcao que altera o capital gasto
+//@param1 capital gasto que e para mudar
 void Client::setCapGasto(string capgasto) {
 	this->capgasto = capgasto;
 }
 
+//-----------------------------------METODOS GET----------------------------
+
+//funcao que retorna o nome
 string Client::getNome() const {
 	return nome;
 }
 
+//funcao que retorna o nif
 string Client::getNif() const {
 	return nif;
 }
 
+//funcao que retorna o agregado familiar
 string Client::getAgregFamiliar() const {
 	return agregfamiliar;
 }
 
+//funcao que retorna a rua
 string Client::getMoradaRua() const {
 	return morada.getRua();
 }
 
+//funcao que retorna a porta
 string Client::getMoradaPorta() const {
 	return morada.getPorta();
 }
 
+//funcao que retorna o andar
 string Client::getMoradaAndar() const {
 	return morada.getAndar();
 }
 
+//funcao que retorna o codigo postal
 string Client::getMoradaCPostal() const {
 	return morada.getCPostal();
 }
 
+//funcao que retorna a localidade
 string Client::getMoradaLocalidade() const {
 	return morada.getLocalidade();
 }
 
+//funcao que retorna a morada formatada
 string Client::getMoradaMorada() const {
 	return morada.getMorada();
 }
 
+//funcao que retorna os pacotes adquiridos
 string Client::getPacotAdquiridos() const {
 	return pacotadquiridos;
 }
 
+//funcao que retorna o capital gasto
 string Client::getCapGasto() const {
 	return capgasto;
 }
 
+//funcao que retorna o cliente
 string Client::getClient() const {
 	return "NOME.............: " + nome + "\nNIF...............: " + nif + "\nMORADA............: " + morada.getMorada() + "\nPACOTES ADQUIRIDOS: " + pacotadquiridos + "\nCAPITAL GASTO.....: " + capgasto;
 }
 
+//---------------------------------OUTRAS-----------------------------
+
+//funcao que mostra o cliente formatado
 void Client::showClient() const {
 	cout << "NOME..............: " << nome << endl
 		<< "NIF...............: " << nif << endl
+		<< "AGREGADO FAMILIAR.: " << agregfamiliar << endl 
 		<< "MORADA............: " << morada.getMorada() << endl
 		<< "PACOTES ADQUIRIDOS: " << pacotadquiridos << endl
 		<< "CAPITAL GASTO.....: " << capgasto << endl;
 
 }
+
