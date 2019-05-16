@@ -3,6 +3,8 @@
 
 using namespace std;
 
+//--------------------------CONSTRUTORES-------------------------
+
 Pacotes::Pacotes()
 {
 	id = "id desconhecido";
@@ -25,126 +27,172 @@ Pacotes::Pacotes(string id, string destino, string diaInicio, string mesInicio, 
 	this->lugaresV = lugaresV;
 }
 
+//-----------------------METODOS SET----------------------
+
+//funcao que altera o id
+//@param1 id que e para alterar
 void Pacotes::setId(string id)
 {
 	this->id = id;
 }
 
+//funcao que altera o destino
+//@param1 destino que e para alterar
 void Pacotes::setDestino(string destino)
 {
 	this->destino = destino;
 }
 
+//funcao que altera o dia de partida
+//@param1 dia de partida que e para alterar
 void Pacotes::setDiaInicio(string diaInicio)
 {
 	dataInicio.setDia(diaInicio);
 }
 
+//funcao que altera o mes de partida
+//@param1 mes de partida que e para alterar
 void Pacotes::setMesInicio(string mesInicio)
 {
 	dataInicio.setMes(mesInicio);
 }
 
+//funcao que altera o ano de partida
+//@param1 ano de partida que e para alterar
 void Pacotes::setAnoInicio(string anoInicio)
 {
 	dataInicio.setAno(anoInicio);
 }
 
+
+//funcao que altera a data de partida
+//@param1 data de partida que e para alterar
 void Pacotes::setDataInicio(string diaInicio, string mesInicio, string anoInicio)
 {
 	dataInicio.setData(diaInicio, mesInicio, anoInicio);
 }
 
+//funcao que altera o dia de chegada
+//@param1 dia de chegada que e para alterar
 void Pacotes::setDiaFim(string diaFim)
 {
 	dataFim.setDia(diaFim);
 }
 
+//funcao que altera o mes de chegada
+//@param1 mes de chegada que e para alterar
 void Pacotes::setMesFim(string mesFim)
 {
 	dataFim.setMes(mesFim);
 }
 
+//funcao que altera o ano de chegada
+//@param1 ano de chegada que e para alterar
 void Pacotes::setAnoFim(string anoFim)
 {
 	dataFim.setAno(anoFim);
 }
 
+
+//funcao que altera a data de chegada
+//@param1 data de chegada que e para alterar
 void Pacotes::setDataFim(string diaFim, string mesFim, string anoFim)
 {
 	dataFim.setData(diaFim, mesFim, anoFim);
 }
 
+//funcao que altera o preco
+//@param1 preco que e para alterar
 void Pacotes::setPreco(string preco)
 {
 	this->preco = preco;
 }
 
+//funcao que altera a lotacao de lugares
+//@param1 lotaca de lugares que e para alterar
 void Pacotes::setLugares(string lugares)
 {
 	this->lugares = lugares;
 }
 
+//funcao que altera o numero de lugares ocupados
+//@param1 numero de lugares ocupados que e para alterar
 void Pacotes::setLugaresV(string lugaresV)
 {
 	this->lugaresV = lugaresV;
 }
 
+//----------------------------METODOS GET-------------------------------
+
+//funcao que retorna o id
 string Pacotes::getId()
 {
 	return id;
 }
 
+//funcao que retorna o destino
 string Pacotes::getDestino()
 {
 	return destino;
 }
 
+//funcao que retorna o dia de partida
 string Pacotes::getDiaInicio()
 {
 	return dataInicio.getDia();
 }
 
+//funcao que retorna o mes de partida
 string Pacotes::getMesInicio()
 {
 	return dataInicio.getMes();
 }
 
+//funcao que retorna o ano de partida
 string Pacotes::getAnoInicio()
 {
 	return dataInicio.getAno();
 }
 
+//funcao que retorna o dia de chegada
 string Pacotes::getDiaFim()
 {
 	return dataFim.getDia();
 }
 
+//funcao que retorna o mes de chegada
 string Pacotes::getMesFim()
 {
 	return dataFim.getMes();
 }
 
+//funcao que retorna o ano de chegada
 string Pacotes::getAnoFim()
 {
 	return dataFim.getAno();
 }
 
+//funcao que retorna o preco
 string Pacotes::getPreco()
 {
 	return preco;
 }
 
+//funcao que retorna a lotacao de lugares
 string Pacotes::getLugares()
 {
 	return lugares;
 }
 
+//funcao que retorna o numero de lugares ocupados
 string Pacotes::getLugaresV()
 {
 	return lugaresV;
 }
 
+//-----------------------OUTRAS----------------------------
+
+//funcao que mostra o pacote formatado
 void Pacotes::showPacote()
 {
 	cout << "IDENTIFICADOR NUMERICO: " << id << '\n'
