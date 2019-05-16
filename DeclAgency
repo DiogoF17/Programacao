@@ -5,6 +5,8 @@
 
 using namespace std;
 
+//-----------------------CONSTRUTORES----------------------------------
+
 Agency::Agency() {
 	nome = "nome desconhecido";
 	nif = "nif desconhecido";
@@ -23,82 +25,116 @@ Agency::Agency(string nome, string nif, string url, string rua, string porta, st
 	this->fichpacotes = fichpacotes;
 }
 
+//-----------------------METODOS SET----------------------------------
+
+//funcao que altera o nome
+//@param1 nome que e para meter
 void Agency::setNome(string nome) {
 	this->nome = nome;
 }
 
+//funcao que altera o nif
+//@param1 nif que e para meter
 void Agency::setNif(string nif) {
 	this->nif = nif;
 }
 
+//funcao que altera o url
+//@param1 url que e para meter
 void Agency::setUrl(string url) {
 	this->url = url;
 }
 
+//funcao que altera rua
+//@param1 rua que e para meter
 void Agency::setAgenciaRua(string rua) {
 	morada.setRua(rua);
 }
 
+//funcao que altera o andar
+//@param1 andar que e para meter
 void Agency::setAgenciaAndar(string andar) {
 	morada.setAndar(andar);
 }
 
+//funcao que altera a porta
+//@param1 porta que e para meter
 void Agency::setAgenciaPorta(string porta) {
 	morada.setPorta(porta);
 }
 
+//funcao que altera o codigo postal
+//@param1 codigo postal que e para meter
 void Agency::setAgenciaCPostal(string cpostal) {
 	morada.setCPostal(cpostal);
 }
 
+//funcao que altera a localidadde
+//@param1 localidade que e para meter
 void Agency::setAgenciaLocalidade(string localidade) {
 	morada.setLocalidade(localidade);
 }
 
+//funcao que altera o nome do ficehiro dos clientes
+//@param1 nome do ficheiro dos clientes que e para meter
 void Agency::setFichCliente(string fichcliente) {
 	this->fichcliente = fichcliente;
 }
 
+//funcao que altera o nome do ficheiro dos pacotes
+//@param1 nome do ficheiro dos pacotes que e para meter
 void Agency::setFichPacotes(string fichpacotes) {
 	this->fichpacotes = fichpacotes;
 }
 
+//------------------------METODOS GET-----------------------------
+
+//funcao que retorna o nome
 string Agency::getNome() const {
 	return nome;
 }
 
+//funcao que retorna o nif
 string Agency::getNif() const {
 	return nif;
 }
 
+//funcao que retorna o url
 string Agency::getUrl() const {
 	return url;
 }
 
+//funcao que retorna a rua
 string Agency::getAgenciaRua() const {
 	return morada.getRua();
 }
 
+//funcao que retorna a porta
 string Agency::getAgenciaPorta() const {
 	return morada.getPorta();
 }
 
+//funcao que retorna o andar
 string Agency::getAgenciaAndar() const {
 	return morada.getAndar();
 }
 
+//funcao que retorna o codigo postal
 string Agency::getAgenciaCPostal() const {
 	return morada.getCPostal();
 }
 
+//funcao que retorna a localidade
 string Agency::getAgenciaLocalidade() const {
 	return morada.getLocalidade();
 }
 
+//funcao que retorna o nome do ficheiro dos clientes
 string Agency::getFichCliente() const {
 	return fichcliente;
 }
 
+//funcao que retorna o nome do ficheiro dos pacotes
 string Agency::getFichPacotes() const {
 	return fichpacotes;
 }
