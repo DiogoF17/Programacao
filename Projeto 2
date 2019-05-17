@@ -25,9 +25,9 @@ struct Destino
 
 //-------------------------VARIAVEIS GLOBAIS----------------------------------
 
-string nomeclifi;
+string nomeclifi;       //nome do ficheiro dos clientes por questoes de atualizacao de ficheiros
 
-string nomepacfi;
+string nomepacfi;		//nome do ficheiro dos pacotes por questoes de atualizacao de ficheiros
 
 //-------------------------DECLARACAO DE FUNCOES----------------------------------
 
@@ -2014,7 +2014,7 @@ void cripac(vector <Client> cliente, vector <Pacotes> & pacote, string & imp) {
 	invalid = true;
 	//ve se as datas sao validas
 	while (invalid) {
-		cout << "\nIntroduza a nova data de chegada no formato ano/mes/dia: ";
+		cout << "\nIntroduza a nova data de chegada no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
 		getline(cin, data);
 		while (cin.fail() || !validdigit(data, ano, mes, dia)) {
 			if (cin.eof()) {
@@ -2023,7 +2023,7 @@ void cripac(vector <Client> cliente, vector <Pacotes> & pacote, string & imp) {
 				break;
 			}
 			cerr << "\nErro no campo data! Tente novamente!\n";
-			cout << "Introduza a data de chegada no formato ano/mes/dia: ";
+			cout << "Introduza a data de chegada no formato ano/mes/dia(CTRL + Z para voltar ao menu anterior): ";
 			getline(cin, data);
 		}
 		//ve se quer voltar
@@ -2094,7 +2094,7 @@ void cripac(vector <Client> cliente, vector <Pacotes> & pacote, string & imp) {
 	cout << "\nIntroduza o numero de lugares ocupados(CTRL + Z para voltar ao menu anterior): ";
 	getline(cin, aux);
 	//verifica se ocorreu algum erro ou se os lugares ocupados sao mais que a lotacao que definimos
-	while (validnum(aux, lugocu) == false || stoi(lugocu) > stoi(novo.getLugares()) || cin.fail()) {
+	while (validnum(aux, lugocu) == false || stoi(lugocu) > stoi(lugdisp) || cin.fail()) {
 		if (cin.eof()) {
 			cin.clear();
 			voltar = true;
@@ -2126,7 +2126,7 @@ void cripac(vector <Client> cliente, vector <Pacotes> & pacote, string & imp) {
 	novo.setLugares(lugdisp);
 	novo.setLugaresV(lugocu);
 	pacote.push_back(novo);
-	cout << "n\nPACOTE CRIADO COM SUCESSO!";
+	cout << "\n\nPACOTE CRIADO COM SUCESSO!";
 }
 
 //altera pacotes
@@ -2679,7 +2679,6 @@ void compac(vector <Client> & cliente, vector <Pacotes> & pacote, string imp) {
 	cout << "\n\nCOMPRA CONCLUIDA COM SUCESSO!";
 }
 
-
 //-----------------------MENUS------------------------------
 
 //Mostra menu com informçao dos pacotes disponiveis
@@ -2891,7 +2890,7 @@ void leagencia(vector <Agency> & parametros) {
 	ifstream entrada;
 	string fichagencia;  //variavel com o nome do ficheiro relativo a agencia
 	string nif, rua, porta, andar, localidade, copostal; //auxilia a leitura de dados
-	cout << "Bem-Vindo! Introduza o nome do ficheiro(com extensao) associado a agencia: ";
+	cout << "Bem-Vindo! Introduza o nome do ficheiro associado a agencia: ";
 	getline(cin, fichagencia);
 	entrada.open(normalise(fichagencia));
 	//verifica se existe algum ficheiro com aquele nome
@@ -3216,3 +3215,4 @@ int main() {
 	acabar(paracliente, parapacotes, imp);
 	return 0;
 }
+
