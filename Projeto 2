@@ -53,6 +53,36 @@ void pacotdisp(vector <Client>, vector <Pacotes>, string);
 
 //-------------------------AUXILIAR----------------------------------
 
+//diz se um valor esta no vetor ou nao
+//@param1 vetor com os codigos dos pacotes
+//@param2 valor a verificar
+bool invector(vector <string> codigos, string verif) {
+	bool pres = false; //assumo que o valor incialmente nao esta no vetor
+	for (int i = 0; i < codigos.size(); i++) {
+		if (codigos[i] == verif) {
+			pres = true;   // se sim coloca pres em true e sai do ciclo
+			break;
+		}
+	}
+	return pres;
+}
+ 
+//verifica se uma dada lista de codigos do utilizador e possivel ou seja se todos os codigos existem nos pacotes
+//@param1 vetor com os codigos de todos os pacotes
+//@param2 vetor com os codigos introduzidos pelo utilizador
+bool existePacote(vector <string> codigos, vector<string> codigoscli) {
+	int conta = 0;
+	for (int i = 0; i < codigoscli.size(); i++) {
+		if (invector(codigos, codigoscli[i]) == true) {
+			conta++;
+		}
+		else
+			return false;
+	}
+	if (codigoscli.size() == conta)
+		return true;
+}
+
 //ve se o vetor incial dos pacotes e igual ao final e se o utlimo pacote a ser ceiado e igual no inicio e no fim
 //@param1 vetor com informacao dos pacotes
 //@param2 vetor com informacao dos pacotes
@@ -240,11 +270,11 @@ vector <string> tovector(string pacotes) {
 	if (pacotes == "-")
 		return a;
 	for (int i = 0; i < pacotes.length(); i++) {
-		if (!isdigit(pacotes[i]) && aux != " ") {
+		if (!isdigit(pacotes[i]) && aux != "") {
 			a.push_back(aux);
 			aux = "";
 		}
-		else
+		else if(isdigit(pacotes[i]))
 			aux += string(1, pacotes[i]);
 	}
 	a.push_back(aux);
@@ -259,20 +289,6 @@ vector <string> codvector(vector <Pacotes> pacote) {
 		aux.push_back(pacote[i].getId());
 	return aux;
 
-}
-
-//diz se um valor esta no vetor ou nao
-//@param1 vetor com os codigos dos pacotes
-//@param2 valor a verificar
-bool invector(vector <string> codigos, string verif) {
-	bool pres = false; //assumo que o valor incialmente nao esta no vetor
-	for (int i = 0; i < codigos.size(); i++) {
-		if (codigos[i] == verif) {
-			pres = true;   // se sim coloca pres em true e sai do ciclo
-			break;
-		}
-	}
-	return pres;
 }
 
 //retorna o indice de um valor num vetor
@@ -788,15 +804,15 @@ int destinosDoCliente(vector<string> aux, vector<Pacotes>Pacotes, vector<Destino
 //@param2 o numero maixmo de opcoes validas a p+artir de 1
 void verificarOpcoes(int& input, int opcoes)
 {
-		while (cin.fail() || input > opcoes || input < 1){
-			if (cin.eof())
-				cin.clear();
-			else {
-				cin.clear(), cin.ignore(1000, '\n');
-			}
-			cerr << "\nOpcao invalida!Tente novamente: ";
-			cin >> input;
+	while (cin.fail() || input > opcoes || input < 1) {
+		if (cin.eof())
+			cin.clear();
+		else {
+			cin.clear(), cin.ignore(1000, '\n');
 		}
+		cerr << "\nOpcao invalida!Tente novamente: ";
+		cin >> input;
+	}
 }
 
 //atualiza os ficheiros
@@ -809,7 +825,7 @@ void acabar(vector <Client> cliente, vector <Pacotes> pacote, string imp) {
 	vector <Pacotes> parapacotesaux;
 	//vai buscar a informacao que estava inicialmente no ficheiro
 	lecliente(nomeclifi, paraclienteaux);
-	lepacotes(nomepacfi, parapacotesaux, impi);     
+	lepacotes(nomepacfi, parapacotesaux, impi);
 	atucli(cliente, nomeclifi, paraclienteaux);
 	atupac(pacote, imp, nomepacfi, parapacotesaux, impi);
 	cout << "\n\nOBRIGADO PELA SUA VISITA!\n\n";
@@ -1335,6 +1351,10 @@ void pacotesRecomendadosAClientes(vector<Client> Clientes, vector <Pacotes> Paco
 //@param3 string com informacao do ultimo a ser criado
 void cricli(vector <Client> & cliente, vector <Pacotes> pacote, string imp) {
 	cout << endl;
+	//utilizadas apenas numa opcao
+	vector <string> codigoscli, codigos;
+	bool conti = true;
+	//////////
 	Client novo;
 	bool voltar = false;
 	string aux;   //auxilia leitura de dados
@@ -1503,25 +1523,34 @@ void cricli(vector <Client> & cliente, vector <Pacotes> pacote, string imp) {
 		return;
 	}
 	espaint(normalise(aux), localidade);
-	cout << "\nIntroduza o codigo dos pacotes que ja adquiriu(se nao adquiriu nenhum digite -)(CTRL + Z para voltar ao menu anterior): ";
-	getline(cin, aux);
-	//verifica se ocorreu algum erro
-	while (cin.fail() || validpacadq(aux, pac) == false) {
-		if (cin.eof()) {
-			cin.clear();
-			voltar = true;
-			break;
-		}
-		cerr << "\nErro no campo pacotes adquiridos!Tente novamente!";
-		cout << "\nIntroduza o codigo dos pacotes que ja adquiriu(se nao adquiriu nenhum ou se vai adquirir agora um, digite -)(CTRL + Z para voltar ao menu anterior): ";
+	while (conti) {
+		cout << "\nIntroduza o codigo dos pacotes que ja adquiriu(se nao adquiriu nenhum digite -)(CTRL + Z para voltar ao menu anterior): ";
 		getline(cin, aux);
+		//verifica se ocorreu algum erro
+		while (cin.fail() || validpacadq(aux, pac) == false) {
+			if (cin.eof()) {
+				cin.clear();
+				voltar = true;
+				break;
+			}
+			cerr << "\nErro no campo pacotes adquiridos!Tente novamente!";
+			cout << "\nIntroduza o codigo dos pacotes que ja adquiriu(se nao adquiriu nenhum digite -)(CTRL + Z para voltar ao menu anterior): ";
+			getline(cin, aux);
+		}
+		//ve se quer voltar
+		if (voltar) {
+			cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+			clientemenu(cliente, pacote, imp);
+			return;
+		}
+		codigoscli = tovector(pac);
+		codigos = codvector(pacote);
+		if (existePacote(codigos, codigoscli) == true)
+			conti = false;
+		else
+			cerr << "\nErro no campo pacotes adquiridos!Tente novamente!";
 	}
-	//ve se quer voltar
-	if (voltar) {
-		cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
-		clientemenu(cliente, pacote, imp);
-		return;
-	}
+
 	cout << "\nIntroduza o capital gasto(CTRL + Z para voltar ao menu anterior): ";
 	getline(cin, aux);
 	//verifica se ocorreu algum erro
@@ -1561,6 +1590,10 @@ void cricli(vector <Client> & cliente, vector <Pacotes> pacote, string imp) {
 //@param2 vetor  que contem informaçao sobre pacotes
 //@param3 string com informacao do ultimo a ser criado
 void altcli(vector <Client> & cliente, vector <Pacotes> pacote, string imp) {
+	//utilizadas apenas numa opcao
+	vector <string> codigoscli, codigos;
+	bool conti = true;
+	//////////
 	char cont;
 	bool voltar = false;
 	int opcao, indice;   //indice guarda o indice do cliente a alterar, opcao para o que pretende alterar
@@ -1827,24 +1860,32 @@ void altcli(vector <Client> & cliente, vector <Pacotes> pacote, string imp) {
 			cliente[indice - 1].setAgregFamiliar(agreg);
 			break;
 		case 5:
-			cout << "Introduza os pacotes adquiridos(todos eles, digite - para nenhum pacote)(CTRL + Z para voltar ao menu anterior): ";
-			getline(cin, aux);
-			//verifica se ocorreu algum erro
-			while (cin.fail() || validpacadq(aux, pac) == false) {
-				if (cin.eof()) {
-					cin.clear();
-					voltar = true;
-					break;
-				}
-				cerr << "\nErro no campo pacotes adquiridos!Tente novamente!";
-				cout << "\nIntroduza os pacotes adquiridos(se nao adquiriu nenhum ou se vai adquirir agora um, digite -)(CTRL + Z para voltar ao menu anterior): ";
+			while (conti) {
+				cout << "Introduza os pacotes adquiridos(todos eles, digite - para nenhum pacote)(CTRL + Z para voltar ao menu anterior): ";
 				getline(cin, aux);
-			}
-			//ve se quer voltar
-			if (voltar) {
-				cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
-				clientemenu(cliente, pacote, imp);
-				return;
+				//verifica se ocorreu algum erro
+				while (cin.fail() || validpacadq(aux, pac) == false) {
+					if (cin.eof()) {
+						cin.clear();
+						voltar = true;
+						break;
+					}
+					cerr << "\nErro no campo pacotes adquiridos!Tente novamente!";
+					cout << "\nIntroduza os pacotes adquiridos(se nao adquiriu nenhum digite -)(CTRL + Z para voltar ao menu anterior): ";
+					getline(cin, aux);
+				}
+				//ve se quer voltar
+				if (voltar) {
+					cout << "\n\nOPERACAO INTERROMPIDA!TODA A INFORMACAO NAO GUARDADA SERA PERDIDA!";
+					clientemenu(cliente, pacote, imp);
+					return;
+				}
+				codigoscli = tovector(pac);
+				codigos = codvector(pacote);
+				if (existePacote(codigos, codigoscli) == true) 
+					conti = false;
+				else
+					cerr << "\nErro no campo pacotes adquiridos!Tente novamente!\n";
 			}
 			cliente[indice - 1].setPacotAdquiridos(pac);
 			break;
