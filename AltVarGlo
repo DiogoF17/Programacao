@@ -1,0 +1,34 @@
+class Fich {
+public:
+	void setFich1(std::string fich1) { this->fich1 = fich1; }
+	void setFich2(std::string fich2) { this->fich2 = fich2; }
+	std::string getFich1() const { return fich1; }
+	std::string getFich2() const { return fich2; }
+private:
+	static std::string fich1;
+	static std::string fich2;
+};
+
+std::string Fich::fich1 = "";
+std::string Fich::fich2 = "";
+
+void aux() {
+	Fich aux;
+
+	std::cout << "Fich1: " << aux.getFich1();
+	std::cout << "Fich2: " << aux.getFich2();
+}
+
+int main() {
+	Fich fich;
+	std::string fich1, fich2;
+
+	std::cout << "Introduza o primeiro: "; std::cin >> fich1;
+	std::cout << "\nIntroduza o segundo: "; std::cin >> fich2;
+
+	fich.setFich1(fich1);
+	fich.setFich2(fich2);
+
+	aux();
+	return 0;
+}
